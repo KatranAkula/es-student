@@ -7,8 +7,9 @@ const uint BUTTON_PIN = 15;
 const uint LED_PIN = 25;
 const uint DEBOUNCE_MS = 20; //константа задержки
 
+bool led = false;
 
-//константа дребезга
+//функция для устранения дребезга
 bool get_button_debounce(uint pin)
 {
     bool state = gpio_get(pin);
@@ -16,12 +17,33 @@ bool get_button_debounce(uint pin)
     return state && gpio_get(pin);
 }
 
-void set_led(bool on) // описываю метод вкл/выкл светодиода
+
+void set_led(bool on) // описываю метод вкл/выкл светодиода и вывод в порт сообщения о состоянии лед
 {
     gpio_put(LED_PIN, on);
     printf("led %s\n", on ? "on" : "off");
 }
 
+//функция для контроля какая кнопка работает
+bool handle_command(int command, bool led)
+{
+    if (command == 'e')
+    {
+        led = true;
+        set_led(led);
+    }
+    else if (command == 'd')
+    {
+        led = false;
+        set_led(led);
+    }
+    else
+    {
+        printf("unknown command: %c\n", command);
+    }
+
+    return led;
+}
 int main()
 {
     // инициализируем вывот в терминал
@@ -43,7 +65,7 @@ int main()
 
     //объявляем переменные
 
-    bool led = false;
+    // bool led = false;
     bool previous = false;
 
    // цикл
@@ -59,5 +81,15 @@ int main()
         }
         
         previous = current; // запоминаем текущее состояние пина кнопки, как предыдущее
+
+        int command = getchar_timeout_us(0); //
+
+        if (command == PICO_ERROR_TIMEOUT)
+        {
+            continue;
+        }
+
+        led = handle_command(command, led);
+
     }
 }
