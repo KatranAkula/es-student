@@ -1,7 +1,7 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include <stdio.h>
-#include "led/led.h"
+#include "led.h"
 
 const uint BUTTON_PIN = 15;
 const uint DEBOUNCE_MS = 20;
