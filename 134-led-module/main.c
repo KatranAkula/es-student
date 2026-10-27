@@ -7,24 +7,24 @@
 const uint BUTTON_PIN = 15;
 const uint DEBOUNCE_MS = 20;
 
-bool get_button_debounce(uint pin)
+bool get_button_debounce(uint pin) //обработка дребезга
 {
-    bool state = gpio_get(pin);
-    sleep_ms(DEBOUNCE_MS);
-    return state && gpio_get(pin);
+    bool state = gpio_get(pin); //объявляем переменную и присваеваем статуса кнопки 1 или 0
+    sleep_ms(DEBOUNCE_MS);      //ждёт задержки в миллисек
+    return state && gpio_get(pin); // присваивает state  1 при повторном 1
 }
 
-bool handle_command(int command)
+bool handle_command(int command) //пришел символ 
 {
-    if (command == 'e')
+    if (command == 'e') //если символ е
     {
         led_set(true);
     }
-    else if (command == 'd')
+    else if (command == 'd') //
     {
         led_set(false);
     }
-        else if (command == 'v')
+        else if (command == 'v') //
     {
         log_version();
     }
