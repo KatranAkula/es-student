@@ -26,11 +26,12 @@ bool handle_command(int command) //пришел символ
     }
         else if (command == 'v') //
     {
-        log_version();
+        log_version();        
     }
     else
     {
-        printf("unknown command: %c\n", command);
+        // это функция, а не макрос printf("unknown command: %c\n", command); printf здесь нельзя — весь вывод идёт через макросы журнала
+        LOG_ERR("unknown command: %c\n", command); //неизвестная команда идёт уровнем ERR
     }
     
 
