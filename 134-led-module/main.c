@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "led.h"
 #include "log.h"
+#include "device.h"
 
 const uint BUTTON_PIN = 15;
 const uint DEBOUNCE_MS = 20;
@@ -28,11 +29,17 @@ bool handle_command(int command) //пришел символ
     {
         log_version();        
     }
+    else if (command == 'i')          // ← вот здесь, до else
+    {
+        device_info();
+    }
+    
     else
     {
         
         LOG_ERR("unknown command: %c\n", command); //неизвестная команда идёт уровнем ERR
     }
+    
     
 
     return led_is_on();
