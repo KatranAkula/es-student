@@ -3,17 +3,17 @@
 устройство: 2e8a:000a
 серийный номер: 55483768338C187A
 порт: COM7
-начало: 2026-11-06T17:07:49
+начало: 2026-11-06T17:19:43
    0.000 --> v
-   0.009 <-- dbg main:72 got v
-   0.011 <-- device: es-led-module 1.0.0, built Nov  6 2026 17:04:13, log level 3
-   1.013 --> e
-   1.029 <-- dbg main:72 got e
+   0.008 <-- dbg main:72 got v
+   0.009 <-- device: es-led-module 1.0.0, built Nov  6 2026 17:17:41, log level 3
+   1.022 --> e
+   1.028 <-- dbg main:72 got e
    1.029 <-- inf led_set:21 led on
-   2.034 --> d
-   2.049 <-- dbg main:72 got d
-   2.051 <-- inf led_set:21 led off
-   3.053 --> q
-   3.070 <-- dbg main:72 got q
-   3.071 <-- err handle_command:34 unknown command: q
+   2.029 --> d
+   2.048 <-- dbg main:72 got d
+   2.049 <-- inf led_set:21 led off
+   3.063 --> q
+   3.068 <-- dbg main:72 got q
+   3.069 <-- err handle_command:34 unknown command: q
 итог: отправлено команд 4
