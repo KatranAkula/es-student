@@ -1,15 +1,15 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include <stdio.h>
-#include <string.h>        // ← ДОБАВЛЕНО: для strcmp()
+#include <string.h>        // для strcmp()
 #include "led.h"
 #include "log.h"
-#include "device.h"        // ← ДОБАВЛЕНО: для device_info()
+#include "device.h"        // для device_info()
 
 const uint BUTTON_PIN = 15;
 const uint DEBOUNCE_MS = 20;
 
-// ===== ШАГ 2: буфер строки и его длина =====
+// ===== ШАГ 2: буфер строки и его длина (из прошлого задания) =====
 #define LINE_SIZE 32
 
 char line[LINE_SIZE];
@@ -22,40 +22,97 @@ bool get_button_debounce(uint pin) //обработка дребезга
     return state && gpio_get(pin); // присваивает state  1 при повторном 1
 }
 
-// ===== ШАГ 4: разбор строки через strcmp() =====
-//bool handle_command(int command) //пришел символ 
-void handle_command(const char *command) //пришла строка
+// ===== ШАГ 1: тип «указатель на функцию без аргументов и возврата» =====
+typedef void (*command_handler_t)(void);
+
+// ===== ШАГ 2: вынести тела команд в отдельные функции =====
+void cmd_enable(void)
 {
-    //if (command == 'e') //если символ е
-    if (strcmp(command, "enable") == 0)
-    {
-        led_set(true);
-    }
-    //else if (command == 'd') //
-    else if (strcmp(command, "disable") == 0)
-    {
-        led_set(false);
-    }
-    //else if (command == 'v') //
-    else if (strcmp(command, "version") == 0)
-    {
-        log_version();        
-    }
-    //else if (command == 'i')          // ← вот здесь, до else
-    else if (strcmp(command, "info") == 0)
-    {
-        device_info();
-    }
-    else
-    {
-        //LOG_ERR("unknown command: %c\n", command); //неизвестная команда идёт уровнем ERR
-        LOG_ERR("unknown command: %s\n", command); //неизвестная команда идёт уровнем ERR
-    }
-    
-    //return led_is_on();
+    led_set(true);
 }
 
-// ===== ШАГ 3: приём строки из символов =====
+void cmd_disable(void)
+{
+    led_set(false);
+}
+
+void cmd_info(void)
+{
+    device_info();
+}
+
+void cmd_version(void)
+{
+    log_version();
+}
+
+// ===== ШАГ 5: новая команда ping =====
+void cmd_ping(void)
+{
+    printf("pong\n");
+}
+
+// ===== ШАГ 3: структура «имя + обработчик» и таблица команд =====
+struct command_t
+{
+    const char *name;
+    command_handler_t handler;
+};
+
+const struct command_t commands[] = {
+    { "enable",  cmd_enable  },
+    { "disable", cmd_disable },
+    { "info",    cmd_info    },
+    { "version", cmd_version },
+    { "ping",    cmd_ping    },
+};
+
+#define COMMAND_COUNT (sizeof(commands) / sizeof(commands[0]))
+
+// ===== ШАГ 4: разбор строки через таблицу =====
+//void handle_command(const char *command) //пришла строка
+//{
+//    if (strcmp(command, "enable") == 0)
+//    {
+//        led_set(true);
+//    }
+//    else if (strcmp(command, "disable") == 0)
+//    {
+//        led_set(false);
+//    }
+//    else if (strcmp(command, "version") == 0)
+//    {
+//        log_version();        
+//    }
+//    else if (strcmp(command, "info") == 0)
+//    {
+//        device_info();
+//    }
+//    else
+//    {
+//        LOG_ERR("unknown command: %s\n", command); //неизвестная команда идёт уровнем ERR
+//    }
+//}
+
+void handle_command(const char *command) //пришла строка
+{
+    for (uint i = 0; i < COMMAND_COUNT; i++)
+    {
+        if (strcmp(command, commands[i].name) == 0)
+        {
+            if (commands[i].handler != NULL)
+            {
+                commands[i].handler();
+            }
+
+            return;
+        }
+    }
+
+    LOG_ERR("unknown command: %s\n", command); //неизвестная команда идёт уровнем ERR
+}
+
+// ===== ШАГ 3 (из прошлого задания): приём строки из символов =====
 void read_line(void)
 {
     int symbol = getchar_timeout_us(0);
@@ -112,15 +169,6 @@ int main()
 
         previous = current;
 
-        //int command = getchar_timeout_us(0);
-        //
-        //if (command == PICO_ERROR_TIMEOUT)
-        //{
-        //    continue;
-        //}
-        //
-        //LOG_DBG("got %c\n", command);
-        //handle_command(command);
-        read_line();   // ← ЗАМЕНА: приём строки вместо одного символа
+        read_line();   // приём строки вместо одного символа
     }
 }
