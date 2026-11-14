@@ -5,11 +5,12 @@
 #include "led.h"
 #include "log.h"
 #include "device.h"        // для device_info()
+#include "memory.h"        // для mem_info()
 
 const uint BUTTON_PIN = 15;
 const uint DEBOUNCE_MS = 20;
 
-// ===== ШАГ 2: буфер строки и его длина (из прошлого задания) =====
+// ===== буфер строки и его длина (из прошлого задания) =====
 #define LINE_SIZE 32
 
 char line[LINE_SIZE];
@@ -22,10 +23,10 @@ bool get_button_debounce(uint pin) //обработка дребезга
     return state && gpio_get(pin); // присваивает state  1 при повторном 1
 }
 
-// ===== ШАГ 1: тип «указатель на функцию без аргументов и возврата» =====
+// ===== тип «указатель на функцию без аргументов и возврата» =====
 typedef void (*command_handler_t)(void);
 
-// ===== ШАГ 2: вынести тела команд в отдельные функции =====
+// ===== вынести тела команд в отдельные функции =====
 void cmd_enable(void)
 {
     led_set(true);
@@ -46,10 +47,15 @@ void cmd_version(void)
     log_version();
 }
 
-// ===== ШАГ 5: новая команда ping =====
+// ===== новая команда ping =====
 void cmd_ping(void)
 {
     printf("pong\n");
+}
+
+void cmd_mem_info(void)
+{
+    mem_info();
 }
 
 // ===== ШАГ 3: структура «имя + обработчик» и таблица команд =====
@@ -65,6 +71,7 @@ const struct command_t commands[] = {
     { "info",    cmd_info    },
     { "version", cmd_version },
     { "ping",    cmd_ping    },
+    { "mem_info", cmd_mem_info },
 };
 
 #define COMMAND_COUNT (sizeof(commands) / sizeof(commands[0]))
