@@ -69,31 +69,6 @@ const struct command_t commands[] = {
 
 #define COMMAND_COUNT (sizeof(commands) / sizeof(commands[0]))
 
-// ===== ШАГ 4: разбор строки через таблицу =====
-//void handle_command(const char *command) //пришла строка
-//{
-//    if (strcmp(command, "enable") == 0)
-//    {
-//        led_set(true);
-//    }
-//    else if (strcmp(command, "disable") == 0)
-//    {
-//        led_set(false);
-//    }
-//    else if (strcmp(command, "version") == 0)
-//    {
-//        log_version();        
-//    }
-//    else if (strcmp(command, "info") == 0)
-//    {
-//        device_info();
-//    }
-//    else
-//    {
-//        LOG_ERR("unknown command: %s\n", command); //неизвестная команда идёт уровнем ERR
-//    }
-//}
-
 void handle_command(const char *command) //пришла строка
 {
     for (uint i = 0; i < COMMAND_COUNT; i++)
