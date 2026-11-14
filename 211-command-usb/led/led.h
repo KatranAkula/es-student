@@ -1,8 +1,9 @@
-#pragma once
+#pragma once                      // чтобы заголовок не подключался дважды забор от двойного включения
 
-#include "pico/stdlib.h"
+#include "pico/stdlib.h"          // заголовок Pico SDK: нужен для типа bool (и uint, если понадобится в других функциях)
 
-void led_init(void);
-void led_set(bool on);
-void led_toggle(void);
-bool led_is_on(void);
+//объявления!!!
+void led_init(void);              //инициализировать модуль светодиода (настроить пин 25 как выход)
+void led_set(bool on);            // включить (on = true) или выключить (on = false) светодиод
+void led_toggle(void);            //переключить светодиод (вкл ↔ выкл)
+bool led_is_on(void);             //вернуть текущее состояние (true = включён, false = выключен)
