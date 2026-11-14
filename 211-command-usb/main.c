@@ -6,6 +6,7 @@
 #include "log.h"
 #include "device.h"        // для device_info()
 #include "memory.h"        // для mem_info()
+#include "command.h"   // доьавка 2.1.4
 
 const uint BUTTON_PIN = 15;
 const uint DEBOUNCE_MS = 20;
@@ -20,11 +21,12 @@ bool get_button_debounce(uint pin) //обработка дребезга
 {
     bool state = gpio_get(pin); //объявляем переменную и присваеваем статуса кнопки 1 или 0
     sleep_ms(DEBOUNCE_MS);      //ждёт задержки в миллисек
-    return state && gpio_get(pin); // присваивает state  1 при повторном 1
+    return state && gpio_get(pin); // присваивает state  1 при повторной 1
 }
 
 // ===== тип «указатель на функцию без аргументов и возврата» =====
-typedef void (*command_handler_t)(void);
+// (перенесено в command.h — 2.1.4)
+// typedef void (*command_handler_t)(void);
 
 // ===== вынести тела команд в отдельные функции =====
 void cmd_enable(void)
@@ -58,13 +60,14 @@ void cmd_mem_info(void)
     mem_info();
 }
 
-// ===== ШАГ 3: структура «имя + обработчик» и таблица команд =====
-struct command_t
+// ===== новая команда fw_info (2.1.4) =====
+void cmd_fw_info(void)
 {
-    const char *name;
-    command_handler_t handler;
-};
+    fw_info();
+}
 
+//  структура «имя + обработчик» и таблица команд 
+// (struct command_t перенесён в command.h — 2.1.4)
 const struct command_t commands[] = {
     { "enable",  cmd_enable  },
     { "disable", cmd_disable },
@@ -72,13 +75,16 @@ const struct command_t commands[] = {
     { "version", cmd_version },
     { "ping",    cmd_ping    },
     { "mem_info", cmd_mem_info },
+    {"fw_info",  cmd_fw_info},   // ← добавить новую команду 2.1.4
 };
 
-#define COMMAND_COUNT (sizeof(commands) / sizeof(commands[0]))
+// ===== длина таблицы вынесена наружу как константа (2.1.4) =====
+// (было: #define COMMAND_COUNT (sizeof(commands) / sizeof(commands[0])))
+const uint command_count = sizeof(commands) / sizeof(commands[0]);
 
 void handle_command(const char *command) //пришла строка
 {
-    for (uint i = 0; i < COMMAND_COUNT; i++)
+    for (uint i = 0; i < command_count; i++)
     {
         if (strcmp(command, commands[i].name) == 0)
         {

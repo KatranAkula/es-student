@@ -2,8 +2,11 @@
 
 #include <stdio.h>                          // для printf
 #include <stdint.h>                         // для uintptr_t (целое, вмещающее адрес)
+#include <stdlib.h>                         // для malloc/free (2.1.4)
 #include "hardware/regs/addressmap.h"       // для XIP_BASE, SRAM_BASE, ROM_BASE
 #include "pico/stdlib.h"                    // для PICO_FLASH_SIZE_BYTES (размер флеш платы)
+#include "command.h"                        // для commands[], command_count (2.1.4)
+#include "device.h"                         // для DEVICE_PROJECT, DEVICE_BOARD (2.1.4)
 
 // ===== ШАГ 2: символы линкера (только объявления, памяти под ними нет) =====
 extern char __flash_binary_start;           // начало образа во флеш
@@ -90,4 +93,76 @@ void mem_info(void)
     printf("  ram free     %7u for heap and %u for stack\n",
            (unsigned)(&__HeapLimit - &__bss_end__),
            (unsigned)(&__StackTop - &__StackBottom));
+}
+
+// =========================================================
+// 2.1.4: fw_info — адреса кода, констант, переменных, стека и кучи
+// =========================================================
+
+// объявление main из другого файла — чтобы взять его адрес
+int main(void);
+
+// глобальные переменные для опыта .data / .bss
+uint32_t data_variable = 100;   // попадёт в .data (значение хранится во флеше и копируется в ОЗУ)
+uint32_t bss_variable;          // попадёт в .bss (в образе нет, startup обнуляет)
+
+void fw_info(void)
+{
+    // ===== счётчики вызова =====
+    data_variable++;
+    bss_variable++;
+
+    // ===== адреса функций: сброс Thumb-бита и чтение первого полуслова =====
+    // имя функции без скобок — адрес её первой команды (с единицей в младшем разряде)
+    // для чтения памяти единицу надо сбросить, иначе HardFault
+    uint16_t *main_code   = (uint16_t *)((uintptr_t)main    & ~1u);
+    uint16_t *fw_info_code = (uint16_t *)((uintptr_t)fw_info & ~1u);
+
+    // ===== локальная переменная на стеке =====
+    uint32_t stack_variable = 1946;
+
+    // ===== блок из кучи =====
+    uint32_t *heap_variable = malloc(sizeof(uint32_t));
+    if (heap_variable != NULL)
+    {
+        *heap_variable = 1951;
+    }
+
+    // ===== шапка таблицы =====
+    printf("%-15s %-12s %s\n", "object", "address", "value");
+
+    // main и fw_info — адрес с признаком Thumb и два байта по сброшенному адресу
+    printf("%-15s 0x%08x  0x%04x\n", "main",    (unsigned)(uintptr_t)main,    (unsigned)*main_code);
+    printf("%-15s 0x%08x  0x%04x\n", "fw_info", (unsigned)(uintptr_t)fw_info, (unsigned)*fw_info_code);
+
+    // commands — адрес массива
+    printf("%-15s 0x%08x\n", "commands", (unsigned)(uintptr_t)commands);
+
+    // обработчики — имя команды и адрес обработчика, строкой на команду
+    for (uint i = 0; i < command_count; i++)
+    {
+        printf("- %-12s 0x%08x\n",
+               commands[i].name,
+               (unsigned)(uintptr_t)commands[i].handler);
+    }
+
+    // константы паспорта из device.h — адрес и значение строк
+    printf("%-15s 0x%08x  %s\n", "DEVICE_PROJECT", (unsigned)(uintptr_t)DEVICE_PROJECT, DEVICE_PROJECT);
+    printf("%-15s 0x%08x  %s\n", "DEVICE_BOARD",   (unsigned)(uintptr_t)DEVICE_BOARD,   DEVICE_BOARD);
+
+    // data_variable и bss_variable — адрес и значение
+    printf("%-15s 0x%08x  %u\n", "data_variable", (unsigned)(uintptr_t)&data_variable, (unsigned)data_variable);
+    printf("%-15s 0x%08x  %u\n", "bss_variable",  (unsigned)(uintptr_t)&bss_variable,  (unsigned)bss_variable);
+
+    // stack_variable — адрес и значение
+    printf("%-15s 0x%08x  %u\n", "stack_variable", (unsigned)(uintptr_t)&stack_variable, (unsigned)stack_variable);
+
+    // heap_variable — адрес БЛОКА (значение указателя), а не адрес самого указателя
+    if (heap_variable != NULL)
+    {
+        printf("%-15s 0x%08x  %u\n", "heap_variable", (unsigned)(uintptr_t)heap_variable, (unsigned)*heap_variable);
+    }
+
+    // ===== вернуть блок кучи =====
+    free(heap_variable);
 }
