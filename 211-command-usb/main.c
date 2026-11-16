@@ -11,7 +11,7 @@
 const uint BUTTON_PIN = 15;
 const uint DEBOUNCE_MS = 20;
 
-// ===== буфер строки и его длина (из прошлого задания) =====
+//буфер строки и его длина (из прошлого задания) 
 #define LINE_SIZE 32
 
 char line[LINE_SIZE];
@@ -24,11 +24,11 @@ bool get_button_debounce(uint pin) //обработка дребезга
     return state && gpio_get(pin); // присваивает state  1 при повторной 1
 }
 
-// ===== тип «указатель на функцию без аргументов и возврата» =====
+// тип «указатель на функцию без аргументов и возврата»
 // (перенесено в command.h — 2.1.4)
 // typedef void (*command_handler_t)(void);
 
-// ===== вынести тела команд в отдельные функции =====
+// вынести тела команд в отдельные функции 
 void cmd_enable(void)
 {
     led_set(true);
@@ -49,7 +49,7 @@ void cmd_version(void)
     log_version();
 }
 
-// ===== новая команда ping =====
+//команда ping
 void cmd_ping(void)
 {
     printf("pong\n");
@@ -60,7 +60,12 @@ void cmd_mem_info(void)
     mem_info();
 }
 
-// ===== новая команда fw_info (2.1.4) =====
+void cmd_dev_info(void)          //обработчик команды 
+{
+    dev_info();                  //вызывает функцию из device.c
+}
+
+//команда fw_info 2.1.4
 void cmd_fw_info(void)
 {
     fw_info();
@@ -76,9 +81,10 @@ const struct command_t commands[] = {
     { "ping",    cmd_ping    },
     { "mem_info", cmd_mem_info },
     {"fw_info",  cmd_fw_info},   // ← добавить новую команду 2.1.4
+    { "dev_info", cmd_dev_info }, //новая строка в таблице команд
 };
 
-// ===== длина таблицы вынесена наружу как константа (2.1.4) =====
+// длина таблицы вынесена наружу как константа 2.1.4
 // (было: #define COMMAND_COUNT (sizeof(commands) / sizeof(commands[0])))
 const uint command_count = sizeof(commands) / sizeof(commands[0]);
 
@@ -100,7 +106,7 @@ void handle_command(const char *command) //пришла строка
     LOG_ERR("unknown command: %s\n", command); //неизвестная команда идёт уровнем ERR
 }
 
-// ===== ШАГ 3 (из прошлого задания): приём строки из символов =====
+// приём строки из символов
 void read_line(void)
 {
     int symbol = getchar_timeout_us(0);

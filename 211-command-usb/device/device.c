@@ -1,5 +1,8 @@
 #include "device.h"                 // мой заголовок: там лежат DEVICE_PROJECT, DEVICE_REPO, DEVICE_BOARD
 
+#include <stddef.h>                 //нужен для работы offsetof
+#include <stdint.h>                 //нужен для uintptr_t
+
 #include <stdio.h>                  // стандартная библиотека: нужна для printf()
 #include "pico/unique_id.h"         // заголовок Pico SDK: нужен для pico_get_unique_board_id_string()
 #include "hardware/regs/addressmap.h" // карта адресов: там SYSINFO_BASE — адрес блока SYSINFO в памяти чипа
@@ -31,4 +34,51 @@ void device_info(void)              // функция без аргументо�
     printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n", // напечатать поля чипа: %03x — hex минимум 3 цифры, %04x — hex минимум 4, %u — десятичное
            manufacturer, part, revision);   // подставить значения, полученные в шаге 2
     printf("pico-sdk: %s\n", PICO_SDK_VERSION_STRING);   // ← ДОБАВЛЕНО: напечатать «pico-sdk: <версия SDK>»
+}
+
+
+struct info_t device_card = {   //Глобальная переменная — заполнена, поэтому попадёт в .data
+    .version  = 0x00010000,         //числовая версия
+    .name     = "es-cmd-usb",       //имя устройства (10 символов + '\0' = 11, влезает в 13)
+    .revision = 2,                  //ревизия платы
+};
+
+
+void dev_info(void) //Команда dev_info — печатает раскладку структуры в памяти
+{
+    printf("%-13s %-10s %6s %6s %s\n", "struct", "address", "size", "offset", "value"); //   шапка таблицы
+    printf("%-13s 0x%08x %6u\n",                                                          //   строка самой структуры
+           "device_card",
+           (unsigned)(uintptr_t)&device_card,   //адрес структуры
+           (unsigned)sizeof(device_card));      //sizeof структуры
+
+    printf("- %-11s 0x%08x %6u %6u 0x%08x\n",  //поле version
+           "version",
+           (unsigned)(uintptr_t)&device_card.version,   //адрес поля
+           (unsigned)sizeof(device_card.version),       //размер поля
+           (unsigned)offsetof(struct info_t, version),  //смещение от начала структуры
+           (unsigned)device_card.version);              //значение поля
+
+    printf("- %-11s 0x%08x %6u %6u %s\n",               //поле name
+           "name",
+           (unsigned)(uintptr_t)device_card.name,       //у массива имя уже адрес, & не нужен
+           (unsigned)sizeof(device_card.name),          //размер массива = 13
+           (unsigned)offsetof(struct info_t, name),     //смещение
+           device_card.name);                           //значение-строка
+
+    printf("- %-11s 0x%08x %6u %6u %u\n",               //поле revision
+           "revision",
+           (unsigned)(uintptr_t)&device_card.revision,  //   адрес поля
+           (unsigned)sizeof(device_card.revision),      //   размер поля
+           (unsigned)offsetof(struct info_t, revision), //   смещение
+           (unsigned)device_card.revision);             //   значение
+
+    unsigned fields = sizeof(device_card.version)       //   сумма размеров полей
+                    + sizeof(device_card.name)
+                    + sizeof(device_card.revision);
+
+    printf("fields %u, sizeof %u, padding %u\n",        //   итоговая строка
+           fields,
+           (unsigned)sizeof(device_card),               //   sizeof структуры
+           (unsigned)(sizeof(device_card) - fields));   //   заполнение
 }
