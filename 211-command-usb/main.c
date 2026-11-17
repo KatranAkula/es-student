@@ -71,6 +71,11 @@ void cmd_fw_info(void)
     fw_info();
 }
 
+void cmd_boot_info(void) //обработчик по заданию 2.1.6
+{
+    boot_info();
+}
+
 //  структура «имя + обработчик» и таблица команд 
 // (struct command_t перенесён в command.h — 2.1.4)
 const struct command_t commands[] = {
@@ -82,6 +87,7 @@ const struct command_t commands[] = {
     { "mem_info", cmd_mem_info },
     {"fw_info",  cmd_fw_info},   // ← добавить новую команду 2.1.4
     { "dev_info", cmd_dev_info }, //новая строка в таблице команд
+    { "boot_info", cmd_boot_info }, //по заданию 2.1.6
 };
 
 // длина таблицы вынесена наружу как константа 2.1.4

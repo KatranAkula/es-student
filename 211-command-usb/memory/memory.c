@@ -1,14 +1,17 @@
 #include "memory.h"                         // мой заголовок: объявление mem_info
 
+#include "led.h"                    //без этого не работает led_pin()
+
 #include <stdio.h>                          // для printf
 #include <stdint.h>                         // для uintptr_t (целое, вмещающее адрес)
 #include <stdlib.h>                         // для malloc/free (2.1.4)
 #include "hardware/regs/addressmap.h"       // для XIP_BASE, SRAM_BASE, ROM_BASE
 #include "pico/stdlib.h"                    // для PICO_FLASH_SIZE_BYTES (размер флеш платы)
+// #include "hardware/gpio.h"   // явное лучше неявного - нужен для gpio_get() - пока подтягивается автоматом #include "pico/stdlib.h" !!!!
 #include "command.h"                        // для commands[], command_count (2.1.4)
 #include "device.h"                         // для DEVICE_PROJECT, DEVICE_BOARD (2.1.4)
 
-// ===== ШАГ 2: символы линкера (только объявления, памяти под ними нет) =====
+//символы линкера (только объявления, памяти под ними нет)
 extern char __flash_binary_start;           // начало образа во флеш
 extern char __flash_binary_end;             // конец образа во флеш объявление без & в mem_info
 extern char __boot2_start__;                // начало загрузчика второй стадии
@@ -22,14 +25,14 @@ extern char __HeapLimit;                    // верхняя граница к�
 extern char __StackBottom;                  // нижняя граница стека
 extern char __StackTop;                     // вершина стека
 
-// ===== Вспомогательная функция: печать одной строки таблицы =====
+//  Вспомогательная функция: печать одной строки таблицы 
 static void row(const char *name, uintptr_t start, uintptr_t end)
 {
     printf("%-10s 0x%08x 0x%08x %8u\n",
            name, (unsigned)start, (unsigned)end, (unsigned)(end - start));
 }
 
-// ===== ШАГ 3: mem_info — таблица + итог =====
+//mem_info — таблица + итог 
 void mem_info(void)
 {
     // шапка таблицы: область, начало, конец, размер
@@ -74,7 +77,7 @@ void mem_info(void)
     // stack: стек (от __StackBottom до __StackTop)
     row("stack", (uintptr_t)&__StackBottom, (uintptr_t)&__StackTop);
 
-    // --- итог ---
+    //итог
     unsigned boot2_size = (unsigned)(&__boot2_end__ - &__boot2_start__);
     unsigned text_size  = (unsigned)(&__etext - &__boot2_end__);
     unsigned data_size  = (unsigned)(&__data_end__ - &__data_start__);
@@ -95,9 +98,8 @@ void mem_info(void)
            (unsigned)(&__StackTop - &__StackBottom));
 }
 
-// =========================================================
-// 2.1.4: fw_info — адреса кода, констант, переменных, стека и кучи
-// =========================================================
+
+//адреса кода, констант, переменных, стека и кучи
 
 // объявление main из другого файла — чтобы взять его адрес
 int main(void);
@@ -108,27 +110,26 @@ uint32_t bss_variable;          // попадёт в .bss (в образе не�
 
 void fw_info(void)
 {
-    // ===== счётчики вызова =====
+    //счётчики вызова
     data_variable++;
     bss_variable++;
 
-    // ===== адреса функций: сброс Thumb-бита и чтение первого полуслова =====
-    // имя функции без скобок — адрес её первой команды (с единицей в младшем разряде)
+    // адреса функций: сброс Thumb-бита и чтение первого полуслова имя функции без скобок — адрес её первой команды (с единицей в младшем разряде)
     // для чтения памяти единицу надо сбросить, иначе HardFault
     uint16_t *main_code   = (uint16_t *)((uintptr_t)main    & ~1u);
     uint16_t *fw_info_code = (uint16_t *)((uintptr_t)fw_info & ~1u);
 
-    // ===== локальная переменная на стеке =====
+    //локальная переменная на стеке
     uint32_t stack_variable = 1946;
 
-    // ===== блок из кучи =====
+    // блок из кучи 
     uint32_t *heap_variable = malloc(sizeof(uint32_t));
     if (heap_variable != NULL)
     {
         *heap_variable = 1951;
     }
 
-    // ===== шапка таблицы =====
+    // шапка таблицы 
     printf("%-15s %-12s %s\n", "object", "address", "value");
 
     // main и fw_info — адрес с признаком Thumb и два байта по сброшенному адресу
@@ -163,6 +164,28 @@ void fw_info(void)
         printf("%-15s 0x%08x  %u\n", "heap_variable", (unsigned)(uintptr_t)heap_variable, (unsigned)*heap_variable);
     }
 
-    // ===== вернуть блок кучи =====
+    //вернуть блок кучи
     free(heap_variable);
+}
+
+#define VECTOR_TABLE 0x10000100     //адрес таблицы векторов (фиксирован)
+#define GPIO_IN_ADDR 0xd0000004     //адрес регистра GPIO_IN блока SIO
+
+void boot_info(void)
+{
+    const uint32_t *vectors = (const uint32_t *)VECTOR_TABLE; //число → указатель
+    uint32_t stack_top    = vectors[0];   // первое слово — начальный SP
+    uint32_t reset_handler = vectors[1];  //второе слово — адрес сброса
+
+    volatile uint32_t *gpio_in = (volatile uint32_t *)GPIO_IN_ADDR; //volatile!
+    uint32_t led_bit  = (*gpio_in >> led_pin()) & 1u;               //сдвиг + маска
+    uint32_t gpio_get_val = (uint32_t)gpio_get(led_pin());          //то же через SDK
+
+    printf("vector table   0x%08x\n", (unsigned)VECTOR_TABLE);
+    printf("  stack top    0x%08x\n", (unsigned)stack_top);
+    printf("  reset        0x%08x\n", (unsigned)reset_handler);
+    printf("  reset (even) 0x%08x\n", (unsigned)(reset_handler & ~1u)); //сброс Thumb
+    printf("gpio in        0x%08x\n", (unsigned)GPIO_IN_ADDR);
+    printf("  led bit      %u\n", (unsigned)led_bit);
+    printf("  gpio_get     %u\n", (unsigned)gpio_get_val);
 }
