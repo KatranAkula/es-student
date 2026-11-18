@@ -3,24 +3,24 @@
 устройство: 2e8a:000a
 серийный номер: 55483768338C187A
 порт: COM7
-начало: 2026-11-18T23:48:19
+начало: 2026-11-19T00:35:35
    0.000 --> clk_info
-   0.171 <-- clk_info
-   0.172 <-- dbg read_line:135 got clk_info
-   0.174 <-- signal     set_khz measured_khz
-   0.175 <-- clk_ref      12000        12001
-   0.176 <-- clk_sys     125000       125000
-   0.177 <-- clk_peri    125000       125001
-   0.178 <-- clk_usb      48000        48000
-   0.179 <-- clk_adc      48000        48000
-   0.179 <-- rosc             -         5631
-   2.033 --> info
-   2.119 <-- info
-   2.119 <-- dbg read_line:135 got info
-   2.120 <-- project: 221-command-time
-   2.121 <-- repo: https://github.com/KatranAkula/es-student
-   2.122 <-- board: unknown
-   2.123 <-- serial: 55483768338C187A
-   2.124 <-- chip: manufacturer 0x927, part 0x0002, revision 2
-   2.124 <-- pico-sdk: 2.3.0
+   0.170 <-- clk_info
+   0.170 <-- dbg read_line:135 got clk_info
+   0.171 <-- signal     set_khz measured_khz
+   0.172 <-- clk_ref      12000        12001
+   0.173 <-- clk_sys     125000       125000
+   0.174 <-- clk_peri    125000       125000
+   0.175 <-- clk_usb      48000        48000
+   0.176 <-- clk_adc      48000        48000
+   0.177 <-- rosc             -         5627
+   2.031 --> info
+   2.117 <-- info
+   2.117 <-- dbg read_line:135 got info
+   2.118 <-- project: 221-command-time
+   2.119 <-- repo: https://github.com/KatranAkula/es-student
+   2.120 <-- board: unknown
+   2.120 <-- serial: 55483768338C187A
+   2.122 <-- chip: manufacturer 0x927, part 0x0002, revision 2
+   2.122 <-- pico-sdk: 2.3.0
 итог: отправлено команд 2, принято строк 17

@@ -20,8 +20,9 @@ add_executable(${PROJECT_NAME}
     clock/clock.c
 )
 
-# Пути поиска заголовков
-# Добавляем корень проекта и все подпапки с заголовками
+pico_set_linker_script(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/memmap_rp2040.ld) #в задании нет, но проверка не проходит!!!
+
+# Пути поиска заголовков добавляем корень проекта и все подпапки с заголовками
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/memory
@@ -40,5 +41,5 @@ target_link_libraries(${PROJECT_NAME}
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
 pico_enable_stdio_uart(${PROJECT_NAME} 0)
 
-# Генерация .uf2, .elf, .map, .dis 
+# создание файлов с именем проекта .uf2, .elf, .map, .dis 
 pico_add_extra_outputs(${PROJECT_NAME})
