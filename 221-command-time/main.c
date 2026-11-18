@@ -173,33 +173,6 @@ void blink(void) //функция мигания, вызывается кажд�
 
 int main()
 {
-
-    /*
-    stdio_init_all();
-
-    led_init();  // модуль сам настроит пин 25 и поставит начальное состояние
-
-    gpio_init(BUTTON_PIN);
-    gpio_set_dir(BUTTON_PIN, GPIO_IN);
-    gpio_pull_up(BUTTON_PIN);
-
-    bool previous = false;
-
-    while (1)
-    {
-        bool current = get_button_debounce(BUTTON_PIN);
-
-        // Переключаем по отпусканию кнопки
-        if (previous == true && current == false)
-        {
-            led_toggle();
-        }
-
-        previous = current;
-
-        read_line();   // приём строки вместо одного символа
-    }
-    */
     
     stdio_init_all(); // вместо обработок кнопок и команд
     led_init();
