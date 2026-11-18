@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.13)
 # Инициализация Pico SDK (путь должен быть задан в PICO_SDK_PATH)
 include(pico_sdk_import.cmake)
 
-project(211_command_usb C CXX ASM)
+project(211_command_usb)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
