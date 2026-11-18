@@ -1,5 +1,5 @@
 #include "pico/stdlib.h"
-#include "hardware/gpio.h"
+//#include "hardware/gpio.h"
 #include <stdio.h>
 #include <string.h>        // для strcmp()
 #include "led.h"
@@ -9,8 +9,8 @@
 #include "command.h"   // доьавка 2.1.4
 #include "clock.h"   // для clk_info 2,2,1
 
-const uint BUTTON_PIN = 15;
-const uint DEBOUNCE_MS = 20;
+//const uint BUTTON_PIN = 15;
+//const uint DEBOUNCE_MS = 20;
 
 //буфер строки и его длина (из прошлого задания) 
 #define LINE_SIZE 32
@@ -18,16 +18,19 @@ const uint DEBOUNCE_MS = 20;
 char line[LINE_SIZE];
 uint line_length = 0;
 
+/*
 bool get_button_debounce(uint pin) //обработка дребезга
 {
     bool state = gpio_get(pin); //объявляем переменную и присваеваем статуса кнопки 1 или 0
     sleep_ms(DEBOUNCE_MS);      //ждёт задержки в миллисек
     return state && gpio_get(pin); // присваивает state  1 при повторной 1
 }
-
+*/
 // тип указатель на функцию без аргументов и возврата
 
 // вынести тела команд в отдельные функции 
+
+/*
 void cmd_enable(void)
 {
     led_set(true);
@@ -37,7 +40,11 @@ void cmd_disable(void)
 {
     led_set(false);
 }
-
+*/
+void cmd_uptime(void) // вместо cmd_enable и cmd_disable
+{
+    uptime();
+}
 void cmd_info(void)
 {
     device_info();
@@ -82,8 +89,9 @@ void cmd_clk_info(void) //обработчик по заданию 2,2,1 (час
 
 //  структура «имя + обработчик» и таблица команд 
 const struct command_t commands[] = {
-    { "enable",  cmd_enable  },
-    { "disable", cmd_disable },
+    //{ "enable",  cmd_enable  },
+    //{ "disable", cmd_disable },
+    { "uptime", cmd_uptime }, //вместо cmd_enable и cmd_disable
     { "info",    cmd_info    },
     { "version", cmd_version }, 
     { "ping",    cmd_ping    },
@@ -148,8 +156,25 @@ void read_line(void)
     }
 }
 
+
+const uint BLINK_HALF_PERIOD_MS = 500; //константа для периода мигания
+uint64_t last_toggle_us = 0; //глобальная переменная хранит отметку последнего переключения  
+
+void blink(void) //функция мигания, вызывается каждую итерацию суперцикла. Ничего не ждёт — только проверяет
+{
+    uint64_t now_us = time_us_64(); //функция ведёт МОНОТОННОЕ ВРЕМЯ!!!!
+
+    if (now_us - last_toggle_us >= BLINK_HALF_PERIOD_MS * 1000) //проверка сколько времени прошло
+    {
+        last_toggle_us = now_us; //перезапись времени текущего переключения
+        led_toggle(); //вкл/выкл светодиод
+    } //если условие не сработало - не блокируем код и едем дальше по суперциклу
+}
+
 int main()
 {
+
+    /*
     stdio_init_all();
 
     led_init();  // модуль сам настроит пин 25 и поставит начальное состояние
@@ -174,4 +199,16 @@ int main()
 
         read_line();   // приём строки вместо одного символа
     }
+    */
+    
+    stdio_init_all(); // вместо обработок кнопок и команд
+    led_init();
+
+    while (1)
+    {
+        blink();
+        read_line();
+    }
+
+
 }
