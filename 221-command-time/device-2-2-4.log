@@ -1,0 +1,63 @@
+задание: 2.2.4
+проект: 221-command-time
+устройство: 2e8a:000a
+серийный номер: 55483768338C187A
+порт: COM7
+начало: 2026-11-22T01:49:05
+   0.000 --> main_time_reset
+   0.001 <-- main_time_reset
+   0.002 <-- dbg read_line:195 got main_time_reset
+   0.004 <-- err handle_command:175 unknown command: main_time_reset
+   0.064 <-- inf led_toggle:29 led on
+   0.565 <-- inf led_toggle:29 led off
+   1.064 <-- inf led_toggle:29 led on
+   1.564 <-- inf led_toggle:29 led off
+   2.063 <-- inf led_toggle:29 led on
+   2.064 --> main_time_exec
+   2.065 <-- main_time_exec
+   2.065 <-- dbg read_line:195 got main_time_exec
+   2.067 <-- iteration avg 2.51 us, max 4699189 us
+   2.563 <-- inf led_toggle:29 led off
+   3.064 <-- inf led_toggle:29 led on
+   3.064 --> calc_pi
+   3.065 <-- calc_pi
+   3.066 <-- dbg read_line:195 got calc_pi
+   7.764 <-- pi: 3.14159165
+   7.764 <-- time: 4698 ms
+   7.766 <-- inf led_toggle:29 led off
+   8.265 <-- inf led_toggle:29 led on
+   8.765 <-- inf led_toggle:29 led off
+   9.179 --> main_time_exec
+   9.180 <-- main_time_exec
+   9.181 <-- dbg read_line:195 got main_time_exec
+   9.182 <-- iteration avg 5.70 us, max 4699189 us
+   9.264 <-- inf led_toggle:29 led on
+   9.765 <-- inf led_toggle:29 led off
+  10.265 <-- inf led_toggle:29 led on
+  10.764 <-- inf led_toggle:29 led off
+  11.265 <-- inf led_toggle:29 led on
+  11.764 <-- inf led_toggle:29 led off
+  12.264 <-- inf led_toggle:29 led on
+  12.765 <-- inf led_toggle:29 led off
+  13.264 <-- inf led_toggle:29 led on
+  13.764 <-- inf led_toggle:29 led off
+  14.265 <-- inf led_toggle:29 led on
+  14.265 --> main_time_exec
+  14.266 <-- main_time_exec
+  14.267 <-- dbg read_line:195 got main_time_exec
+  14.268 <-- iteration avg 2.64 us, max 4699189 us
+  14.765 <-- inf led_toggle:29 led off
+  15.263 <-- inf led_toggle:29 led on
+  15.469 --> main_time_reset
+  15.470 <-- main_time_reset
+  15.471 <-- dbg read_line:195 got main_time_reset
+  15.471 <-- max reset
+  15.764 <-- inf led_toggle:29 led off
+  16.265 <-- inf led_toggle:29 led on
+  16.472 --> main_time_exec
+  16.472 <-- main_time_exec
+  16.473 <-- dbg read_line:195 got main_time_exec
+  16.475 <-- iteration avg 2.59 us, max 295 us
+  16.765 <-- inf led_toggle:29 led off
+  17.263 <-- inf led_toggle:29 led on
+итог: отправлено команд 7, принято строк 49

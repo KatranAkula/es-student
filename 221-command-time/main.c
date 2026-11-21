@@ -8,6 +8,7 @@
 #include "memory.h"        // для mem_info()
 #include "command.h"   // доьавка 2.1.4
 #include "clock.h"   // для clk_info 2,2,1
+#include "profiling.h"
 
 //const uint BUTTON_PIN = 15;
 //const uint DEBOUNCE_MS = 20;
@@ -109,6 +110,19 @@ void cmd_clk_info(void) //обработчик по заданию 2,2,1 (час
     clk_info();
 }
 
+void cmd_main_time_exec(void)
+{
+    printf("iteration avg %.2f us, max %u us\n",
+           profiling_avg_us(),
+           (unsigned)profiling_max_us());
+}
+
+void cmd_main_time_reset(void)
+{
+    profiling_reset_max();
+    printf("max reset\n");
+}
+
 volatile double pi_result;
 
 void cmd_calc_pi(void)
@@ -136,6 +150,8 @@ const struct command_t commands[] = {
     { "boot_info", cmd_boot_info }, //по заданию 2.1.6
     { "clk_info", cmd_clk_info }, //накрутка для 2,2,1
     { "calc_pi", cmd_calc_pi }, //2,2,3
+    { "main_time_exec", cmd_main_time_exec },
+    { "main_time_reset", cmd_main_time_reset },
 };
 
 // длина таблицы вынесена наружу как константа
@@ -214,8 +230,11 @@ int main()
     stdio_init_all(); // вместо обработок кнопок и команд
     led_init();
 
+    profiling_init(); // ← добавь эту строку
+
     while (1)
     {
+        profiling_iteration(); //замеряется вся итерация целиком:  мигание, приём команд
         blink();
         read_line();
     }

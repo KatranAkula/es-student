@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
     logging/log.c
     device/device.c
     clock/clock.c
+    profiling/profiling.c
 )
 
 pico_set_linker_script(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/memmap_rp2040.ld) #в задании нет, но проверка не проходит!!!
@@ -30,6 +31,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/logging
     ${CMAKE_CURRENT_SOURCE_DIR}/device
     ${CMAKE_CURRENT_SOURCE_DIR}/clock
+    ${CMAKE_CURRENT_SOURCE_DIR}/profiling
 )
 
 # Библиотеки SDK
