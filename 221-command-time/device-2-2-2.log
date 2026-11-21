@@ -3,68 +3,68 @@
 устройство: 2e8a:000a
 серийный номер: 55483768338C187A
 порт: COM7
-начало: 2026-11-19T02:50:53
+начало: 2026-11-19T02:59:45
    0.000 --> uptime
-   0.000 <-- uptime
-   0.001 <-- dbg read_line:143 got uptime
-   0.003 <-- uptime: 25582 ms
-   0.419 <-- inf led_toggle:29 led off
-   0.419 --> boot_info
-   0.420 <-- boot_info
-   0.422 <-- dbg read_line:143 got boot_info
-   0.423 <-- vector table   0x10000100
-   0.424 <-- stack top    0x20042000
-   0.425 <-- reset        0x100001f7
-   0.426 <-- reset (even) 0x100001f6
-   0.427 <-- gpio in        0xd0000004
-   0.428 <-- led bit      0
-   0.428 <-- gpio_get     0
-   0.833 --> uptime
-   0.834 <-- uptime
-   0.835 <-- dbg read_line:143 got uptime
-   0.836 <-- uptime: 26415 ms
-   0.919 <-- inf led_toggle:29 led on
-   1.333 --> boot_info
-   1.334 <-- boot_info
-   1.335 <-- dbg read_line:143 got boot_info
-   1.336 <-- vector table   0x10000100
-   1.337 <-- stack top    0x20042000
-   1.338 <-- reset        0x100001f7
-   1.338 <-- reset (even) 0x100001f6
-   1.339 <-- gpio in        0xd0000004
-   1.339 <-- led bit      1
-   1.340 <-- gpio_get     1
-   1.419 <-- inf led_toggle:29 led off
-   1.841 --> uptime
-   1.842 <-- uptime
-   1.842 <-- dbg read_line:143 got uptime
-   1.844 <-- uptime: 27423 ms
-   1.919 <-- inf led_toggle:29 led on
-   2.330 --> boot_info
-   2.331 <-- boot_info
-   2.332 <-- dbg read_line:143 got boot_info
-   2.335 <-- vector table   0x10000100
-   2.336 <-- stack top    0x20042000
-   2.336 <-- reset        0x100001f7
-   2.337 <-- reset (even) 0x100001f6
-   2.338 <-- gpio in        0xd0000004
-   2.338 <-- led bit      1
-   2.339 <-- gpio_get     1
-   2.419 <-- inf led_toggle:29 led off
-   2.834 --> uptime
-   2.834 <-- uptime
-   2.835 <-- dbg read_line:143 got uptime
-   2.837 <-- uptime: 28416 ms
-   2.919 <-- inf led_toggle:29 led on
-   3.328 --> boot_info
-   3.329 <-- boot_info
-   3.329 <-- dbg read_line:143 got boot_info
-   3.331 <-- vector table   0x10000100
-   3.332 <-- stack top    0x20042000
-   3.333 <-- reset        0x100001f7
-   3.334 <-- reset (even) 0x100001f6
-   3.335 <-- gpio in        0xd0000004
-   3.336 <-- led bit      1
-   3.337 <-- gpio_get     1
-   3.419 <-- inf led_toggle:29 led off
+   0.001 <-- uptime
+   0.002 <-- dbg read_line:143 got uptime
+   0.004 <-- uptime: 558096 ms
+   0.405 <-- inf led_toggle:29 led on
+   0.406 --> boot_info
+   0.406 <-- boot_info
+   0.408 <-- dbg read_line:143 got boot_info
+   0.409 <-- vector table   0x10000100
+   0.410 <-- stack top    0x20042000
+   0.410 <-- reset        0x100001f7
+   0.411 <-- reset (even) 0x100001f6
+   0.412 <-- gpio in        0xd0000004
+   0.413 <-- led bit      1
+   0.413 <-- gpio_get     1
+   0.817 --> uptime
+   0.817 <-- uptime
+   0.818 <-- dbg read_line:143 got uptime
+   0.820 <-- uptime: 558913 ms
+   0.906 <-- inf led_toggle:29 led off
+   1.308 --> boot_info
+   1.309 <-- boot_info
+   1.310 <-- dbg read_line:143 got boot_info
+   1.311 <-- vector table   0x10000100
+   1.312 <-- stack top    0x20042000
+   1.313 <-- reset        0x100001f7
+   1.314 <-- reset (even) 0x100001f6
+   1.314 <-- gpio in        0xd0000004
+   1.315 <-- led bit      0
+   1.316 <-- gpio_get     0
+   1.406 <-- inf led_toggle:29 led on
+   1.820 --> uptime
+   1.821 <-- uptime
+   1.822 <-- dbg read_line:143 got uptime
+   1.823 <-- uptime: 559916 ms
+   1.905 <-- inf led_toggle:29 led off
+   2.317 --> boot_info
+   2.317 <-- boot_info
+   2.318 <-- dbg read_line:143 got boot_info
+   2.321 <-- vector table   0x10000100
+   2.322 <-- stack top    0x20042000
+   2.322 <-- reset        0x100001f7
+   2.323 <-- reset (even) 0x100001f6
+   2.324 <-- gpio in        0xd0000004
+   2.324 <-- led bit      0
+   2.325 <-- gpio_get     0
+   2.406 <-- inf led_toggle:29 led on
+   2.812 --> uptime
+   2.812 <-- uptime
+   2.813 <-- dbg read_line:143 got uptime
+   2.814 <-- uptime: 560908 ms
+   2.906 <-- inf led_toggle:29 led off
+   3.323 --> boot_info
+   3.323 <-- boot_info
+   3.324 <-- dbg read_line:143 got boot_info
+   3.326 <-- vector table   0x10000100
+   3.327 <-- stack top    0x20042000
+   3.327 <-- reset        0x100001f7
+   3.328 <-- reset (even) 0x100001f6
+   3.329 <-- gpio in        0xd0000004
+   3.330 <-- led bit      0
+   3.330 <-- gpio_get     0
+   3.405 <-- inf led_toggle:29 led on
 итог: отправлено команд 8, принято строк 55

@@ -18,6 +18,28 @@
 char line[LINE_SIZE];
 uint line_length = 0;
 
+// прикидка: за член ряда 4 операции с double, 175 + 110 + 190 + 110 = 585 тактов;
+// 1 000 000 членов по 585 тактов при 125 МГц — около 4,7 с
+const uint CALC_PI_TERMS = 1000000;
+//один проход: 175 + 110 + 190 + 110 = 585 тактов
+//миллион: 1 000 000 × 585 = 585 000 000 тактов
+//такты в секунды: Частота процессора — 125 МГц (125 000 000 тактов в секунду) 585 000 000 / 125 000 000 = 4,68 секунды
+
+
+double calc_pi(uint terms)
+{
+    double sum = 0.0;      // накопитель суммы
+    double sign = 1.0;     // знак очередного члена: +1, -1, +1...
+
+    for (uint k = 0; k < terms; k++)
+    {
+        sum += sign / (2.0 * k + 1.0);  // прибавляем sign / (2k+1)
+        sign = -sign;                    // меняем знак на противоположный
+    }
+
+    return sum * 4.0;      // ряд Лейбница даёт π/4, умножаем на 4
+}
+
 /*
 bool get_button_debounce(uint pin) //обработка дребезга
 {
@@ -87,6 +109,19 @@ void cmd_clk_info(void) //обработчик по заданию 2,2,1 (час
     clk_info();
 }
 
+volatile double pi_result;
+
+void cmd_calc_pi(void)
+{
+    uint64_t start_us = time_us_64();       //снимаее время до расчёта
+    pi_result = calc_pi(CALC_PI_TERMS);     //считаее (запись в volatile!)
+    uint64_t spent_us = time_us_64() - start_us; //снимаем время после
+
+    printf("pi: %.8f\n", pi_result);        //выводит результат
+    printf("time: %llu ms\n", spent_us / 1000); //выводит время в мс
+}
+
+
 //  структура «имя + обработчик» и таблица команд 
 const struct command_t commands[] = {
     //{ "enable",  cmd_enable  },
@@ -100,6 +135,7 @@ const struct command_t commands[] = {
     { "dev_info", cmd_dev_info }, //новая строка в таблице команд
     { "boot_info", cmd_boot_info }, //по заданию 2.1.6
     { "clk_info", cmd_clk_info }, //накрутка для 2,2,1
+    { "calc_pi", cmd_calc_pi }, //2,2,3
 };
 
 // длина таблицы вынесена наружу как константа
@@ -170,6 +206,7 @@ void blink(void) //функция мигания, вызывается кажд�
         led_toggle(); //вкл/выкл светодиод
     } //если условие не сработало - не блокируем код и едем дальше по суперциклу
 }
+
 
 int main()
 {
