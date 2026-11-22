@@ -38,7 +38,7 @@ double calc_pi(uint terms)
         sign = -sign;                    // меняем знак на противоположный
     }
 
-    return sum * 4.0;      // ряд Лейбница даёт π/4, умножаем на 4
+    return sum * 4.0;      // ряд Лейбница даёт П/4, умножаем на 4
 }
 
 /*
@@ -89,9 +89,9 @@ void cmd_mem_info(void)
     mem_info();
 }
 
-void cmd_dev_info(void)          //обработчик команды 
+void cmd_dev_info(void)  //обработчик команды 
 {
-    dev_info();                  //вызывает функцию из device.c
+    dev_info(); //вызывает функцию из device.c
 }
 
 //команда fw_info 2.1.4
@@ -242,7 +242,7 @@ int main()
     stdio_init_all(); // вместо обработок кнопок и команд
     led_init();
 
-    profiling_init(); // ← добавь эту строку
+    profiling_init(); 
 
     while (1)
     {

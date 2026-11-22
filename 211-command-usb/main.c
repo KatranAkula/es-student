@@ -85,7 +85,7 @@ const struct command_t commands[] = {
     { "version", cmd_version },
     { "ping",    cmd_ping    },
     { "mem_info", cmd_mem_info },
-    {"fw_info",  cmd_fw_info},   // ← добавить новую команду 2.1.4
+    {"fw_info",  cmd_fw_info},   //новая команда 2.1.4
     { "dev_info", cmd_dev_info }, //новая строка в таблице команд
     { "boot_info", cmd_boot_info }, //по заданию 2.1.6
 };
@@ -161,7 +161,7 @@ int main()
     {
         bool current = get_button_debounce(BUTTON_PIN);
 
-        // Переключаем по отпусканию кнопки
+        // Переключаю по отпусканию кнопки
         if (previous == true && current == false)
         {
             led_toggle();

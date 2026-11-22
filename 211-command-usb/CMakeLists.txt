@@ -20,7 +20,7 @@ add_executable(${PROJECT_NAME}
 )
 
 # Пути поиска заголовков
-# Добавляем корень проекта и все подпапки с заголовками
+# корень проекта и все подпапки с заголовками
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/memory

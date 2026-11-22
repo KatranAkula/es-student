@@ -2,8 +2,8 @@
 
 #include <stdio.h>                          // нужен для printf (используется в макросах LOG_*)
 
-//#define DEVICE_NAME "es-led-module"       // (закомментировано: перенесено в device.h)
-//#define FIRMWARE_VERSION "1.0.0"          // (закомментировано: перенесено в device.h)
+//#define DEVICE_NAME "es-led-module"       //перенесено в device.h)
+//#define FIRMWARE_VERSION "1.0.0"          //перенесено в device.h)
 
 #define LOG_LEVEL_ERR 1                     // уровень «только ошибки» (самый важный, всегда печатается)
 #define LOG_LEVEL_INF 2                     // уровень «ошибки + информация» (обычные сообщения)

@@ -1,29 +1,29 @@
-#include "memory.h"                         // мой заголовок: объявление mem_info
+#include "memory.h"   // мой заголовок: объявление mem_info
 
-#include "led.h"                    //без этого не работает led_pin()
+#include "led.h"    //без этого не работает led_pin()
 
-#include <stdio.h>                          // для printf
-#include <stdint.h>                         // для uintptr_t (целое, вмещающее адрес)
-#include <stdlib.h>                         // для malloc/free (2.1.4)
+#include <stdio.h>  // для printf
+#include <stdint.h>    // для uintptr_t (целое, вмещающее адрес)
+#include <stdlib.h>       // для malloc/free (2.1.4)
 #include "hardware/regs/addressmap.h"       // для XIP_BASE, SRAM_BASE, ROM_BASE
-#include "pico/stdlib.h"                    // для PICO_FLASH_SIZE_BYTES (размер флеш платы)
+#include "pico/stdlib.h"    // для PICO_FLASH_SIZE_BYTES (размер флеш платы)
 // #include "hardware/gpio.h"   // явное лучше неявного - нужен для gpio_get() - пока подтягивается автоматом #include "pico/stdlib.h" !!!!
-#include "command.h"                        // для commands[], command_count (2.1.4)
-#include "device.h"                         // для DEVICE_PROJECT, DEVICE_BOARD (2.1.4)
+#include "command.h"              // для commands[], command_count (2.1.4)
+#include "device.h"         // для DEVICE_PROJECT, DEVICE_BOARD (2.1.4)
 
 //символы линкера (только объявления, памяти под ними нет)
-extern char __flash_binary_start;           // начало образа во флеш
-extern char __flash_binary_end;             // конец образа во флеш объявление без & в mem_info
-extern char __boot2_start__;                // начало загрузчика второй стадии
-extern char __boot2_end__;                  // конец загрузчика второй стадии
-extern char __etext;                        // конец кода и констант (начало хранения .data)
-extern char __data_start__;                 // начало .data в ОЗУ
-extern char __data_end__;                   // конец .data в ОЗУ
-extern char __bss_start__;                  // начало .bss в ОЗУ
-extern char __bss_end__;                    // конец .bss в ОЗУ
-extern char __HeapLimit;                    // верхняя граница кучи
-extern char __StackBottom;                  // нижняя граница стека
-extern char __StackTop;                     // вершина стека
+extern char __flash_binary_start;   // начало образа во флеш
+extern char __flash_binary_end;    // конец образа во флеш объявление без & в mem_info
+extern char __boot2_start__;  // начало загрузчика второй стадии
+extern char __boot2_end__;    // конец загрузчика второй стадии
+extern char __etext;     // конец кода и констант (начало хранения .data)
+extern char __data_start__;     // начало .data в ОЗУ
+extern char __data_end__;    // конец .data в ОЗУ
+extern char __bss_start__;   // начало .bss в ОЗУ
+extern char __bss_end__;   // конец .bss в ОЗУ
+extern char __HeapLimit;   // верхняя граница кучи
+extern char __StackBottom;    // нижняя граница стека
+extern char __StackTop;    // вершина стека
 
 //  Вспомогательная функция: печать одной строки таблицы 
 static void row(const char *name, uintptr_t start, uintptr_t end)
@@ -38,7 +38,7 @@ void mem_info(void)
     // шапка таблицы: область, начало, конец, размер
     printf("%-10s %-10s %-10s %8s\n", "area", "start", "end", "size");
 
-    // --- три области, заданные чипом (не линкером) ---
+    //три области, заданные чипом (не линкером)
     // flash: базовый адрес XIP_BASE, размер из PICO_FLASH_SIZE_BYTES
     row("flash", (uintptr_t)XIP_BASE, (uintptr_t)XIP_BASE + PICO_FLASH_SIZE_BYTES);
 
@@ -48,33 +48,32 @@ void mem_info(void)
     // rom: базовый адрес ROM_BASE, размер 16 КБ (из datasheet)
     row("rom", (uintptr_t)ROM_BASE, (uintptr_t)ROM_BASE + (16 * 1024));
 
-    // --- области, заданные линкером ---
-    // image: весь образ во флеш
+    //области, заданные линкером image- весь образ во флеш
     row("image", (uintptr_t)&__flash_binary_start, (uintptr_t)&__flash_binary_end); //здесь & — берём адрес, а не значение
 
-    // free: свободное место во флеш (от конца образа до конца флеш)
+    // free- свободное место во флеш (от конца образа до конца флеш)
     row("free", (uintptr_t)&__flash_binary_end, (uintptr_t)XIP_BASE + PICO_FLASH_SIZE_BYTES);
 
-    // boot2: загрузчик второй стадии (ровно 256 байт)
+    // boot2- загрузчик второй стадии (ровно 256 байт)
     row("boot2", (uintptr_t)&__boot2_start__, (uintptr_t)&__boot2_end__);
 
-    // text: код и константы (от конца boot2 до __etext)
+    // text- код и константы (от конца boot2 до __etext)
     row("text", (uintptr_t)&__boot2_end__, (uintptr_t)&__etext);
 
-    // data flash: хранение .data во флеш (от __etext, длиной с .data)
+    // data flash- хранение .data во флеш (от __etext, длиной с .data)
     row("data flash", (uintptr_t)&__etext,
         (uintptr_t)&__etext + ((uintptr_t)&__data_end__ - (uintptr_t)&__data_start__));
 
-    // data ram: работа .data в ОЗУ
+    // data ram- работа .data в ОЗУ
     row("data ram", (uintptr_t)&__data_start__, (uintptr_t)&__data_end__);
 
-    // bss: неинициализированные данные в ОЗУ
+    // bss- неинициализированные данные в ОЗУ
     row("bss", (uintptr_t)&__bss_start__, (uintptr_t)&__bss_end__);
 
-    // heap: куча (от конца .bss до __HeapLimit)
+    // heap- КУЧА!!! (от конца .bss до __HeapLimit)
     row("heap", (uintptr_t)&__bss_end__, (uintptr_t)&__HeapLimit);
 
-    // stack: стек (от __StackBottom до __StackTop)
+    // stack- стек (от __StackBottom до __StackTop)
     row("stack", (uintptr_t)&__StackBottom, (uintptr_t)&__StackTop);
 
     //итог
@@ -105,8 +104,8 @@ void mem_info(void)
 int main(void);
 
 // глобальные переменные для опыта .data / .bss
-uint32_t data_variable = 100;   // попадёт в .data (значение хранится во флеше и копируется в ОЗУ)
-uint32_t bss_variable;          // попадёт в .bss (в образе нет, startup обнуляет)
+uint32_t data_variable = 100;   // попадает в .data (значение хранится во флеше и копируется в ОЗУ)
+uint32_t bss_variable;  // попадает в .bss (в образе нет, startup обнуляет)
 
 void fw_info(void)
 {
@@ -114,7 +113,7 @@ void fw_info(void)
     data_variable++;
     bss_variable++;
 
-    // адреса функций: сброс Thumb-бита и чтение первого полуслова имя функции без скобок — адрес её первой команды (с единицей в младшем разряде)
+    // адреса функций - сброс Thumb-бита и чтение первого полуслова имя функции без скобок — адрес её первой команды (с единицей в младшем разряде)
     // для чтения памяти единицу надо сбросить, иначе HardFault
     uint16_t *main_code   = (uint16_t *)((uintptr_t)main    & ~1u);
     uint16_t *fw_info_code = (uint16_t *)((uintptr_t)fw_info & ~1u);
