@@ -135,6 +135,16 @@ void cmd_calc_pi(void)
     printf("time: %llu ms\n", spent_us / 1000); //выводит время в мс
 }
 
+void cmd_clk_sys_low(void)
+{
+    clk_sys_low();
+}
+
+void cmd_clk_sys_default(void)
+{
+    clk_sys_default();
+}
+
 
 //  структура «имя + обработчик» и таблица команд 
 const struct command_t commands[] = {
@@ -152,6 +162,8 @@ const struct command_t commands[] = {
     { "calc_pi", cmd_calc_pi }, //2,2,3
     { "main_time_exec", cmd_main_time_exec },
     { "main_time_reset", cmd_main_time_reset },
+    { "clk_sys_low", cmd_clk_sys_low },
+    { "clk_sys_default", cmd_clk_sys_default },
 };
 
 // длина таблицы вынесена наружу как константа

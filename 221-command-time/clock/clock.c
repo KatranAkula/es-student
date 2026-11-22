@@ -3,6 +3,11 @@
 #include <stdio.h>    //printf()
 #include "pico/stdlib.h"     //загружаемые типы SDK
 #include "hardware/clocks.h"    //подключаю часть СДК  даёт имена clk_ref, clk_sys, clk_peri, clk_usb, clk_adc; прототип clock_get_hz(); прототип frequency_count_khz(); константы CLOCKS_FC0_SRC_VALUE_
+#include "log.h"
+
+// set_sys_clock_khz() вызывает set_sys_clock_pll(), а та переводит clk_peri
+// на PLL для USB, 48 МГц. Так настроено по умолчанию:
+// PICO_CLOCK_ADJUST_PERI_CLOCK_WITH_SYS_CLOCK равен 0.
 
 static void row(const char *name, uint32_t set_khz, uint32_t measured_khz) //вывод в консоль одной строки таблицы: имя сигнала, настроенная частота, измеренная частота
 {
@@ -42,4 +47,28 @@ void clk_info(void)
 void uptime(void)
 {
     printf("uptime: %llu ms\n", time_us_64() / 1000);
+}
+
+const uint32_t CLK_SYS_LOW_KHZ = 62500;
+
+static void clk_sys_set(uint32_t khz)
+{
+    if (set_sys_clock_khz(khz, false))
+    {
+        LOG_INF("clk_sys %u kHz\n", (unsigned)khz);
+    }
+    else
+    {
+        LOG_ERR("clk_sys %u kHz is not set\n", (unsigned)khz);
+    }
+}
+
+void clk_sys_low(void)
+{
+    clk_sys_set(CLK_SYS_LOW_KHZ);
+}
+
+void clk_sys_default(void)
+{
+    clk_sys_set(SYS_CLK_KHZ);
 }

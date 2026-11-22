@@ -1,0 +1,124 @@
+задание: 2.2.5
+проект: 221-command-time
+устройство: 2e8a:000a
+серийный номер: 55483768338C187A
+порт: COM7
+начало: 2026-11-22T03:48:25
+   0.000 --> clk_info
+   0.001 <-- clk_info
+   0.002 <-- dbg read_line:207 got clk_info
+   0.004 <-- signal     set_khz measured_khz
+   0.005 <-- clk_ref      12000        12001
+   0.006 <-- clk_sys     125000       125000
+   0.007 <-- clk_peri    125000       125000
+   0.009 <-- clk_usb      48000        48000
+   0.010 <-- clk_adc      48000        48000
+   0.010 <-- rosc             -         5626
+   0.232 <-- inf led_toggle:29 led on
+   0.733 <-- inf led_toggle:29 led off
+   1.151 --> main_time_reset
+   1.152 <-- main_time_reset
+   1.153 <-- dbg read_line:207 got main_time_reset
+   1.154 <-- max reset
+   1.233 <-- inf led_toggle:29 led on
+   1.733 <-- inf led_toggle:29 led off
+   2.232 <-- inf led_toggle:29 led on
+   2.733 <-- inf led_toggle:29 led off
+   3.233 <-- inf led_toggle:29 led on
+   3.233 --> main_time_exec
+   3.234 <-- main_time_exec
+   3.235 <-- dbg read_line:207 got main_time_exec
+   3.236 <-- iteration avg 2.55 us, max 310 us
+   3.733 <-- inf led_toggle:29 led off
+   4.231 <-- inf led_toggle:29 led on
+   4.439 --> calc_pi
+   4.439 <-- calc_pi
+   4.440 <-- dbg read_line:207 got calc_pi
+   9.139 <-- pi: 3.14159165
+   9.140 <-- time: 4698 ms
+   9.142 <-- inf led_toggle:29 led off
+   9.640 <-- inf led_toggle:29 led on
+  10.140 <-- inf led_toggle:29 led off
+  10.555 --> clk_sys_low
+  10.556 <-- clk_sys_low
+  10.557 <-- dbg read_line:207 got clk_sys_low
+  10.559 <-- inf clk_sys_set:58 clk_sys 62500 kHz
+  10.640 <-- inf led_toggle:29 led on
+  11.140 <-- inf led_toggle:29 led off
+  11.559 --> clk_info
+  11.560 <-- clk_info
+  11.561 <-- dbg read_line:207 got clk_info
+  11.562 <-- signal     set_khz measured_khz
+  11.563 <-- clk_ref      12000        12002
+  11.564 <-- clk_sys      62500        62500
+  11.565 <-- clk_peri     48000        48000
+  11.566 <-- clk_usb      48000        48000
+  11.567 <-- clk_adc      48000        48000
+  11.569 <-- rosc             -         5638
+  11.639 <-- inf led_toggle:29 led on
+  12.140 <-- inf led_toggle:29 led off
+  12.639 <-- inf led_toggle:29 led on
+  12.640 --> uptime
+  12.641 <-- uptime
+  12.642 <-- dbg read_line:207 got uptime
+  12.643 <-- uptime: 98910 ms
+  13.139 <-- inf led_toggle:29 led off
+  13.639 <-- inf led_toggle:29 led on
+  14.140 <-- inf led_toggle:29 led off
+  14.639 <-- inf led_toggle:29 led on
+  14.849 --> uptime
+  14.850 <-- uptime
+  14.851 <-- dbg read_line:207 got uptime
+  14.852 <-- uptime: 101120 ms
+  15.139 <-- inf led_toggle:29 led off
+  15.639 <-- inf led_toggle:29 led on
+  16.049 --> main_time_reset
+  16.051 <-- main_time_reset
+  16.052 <-- dbg read_line:207 got main_time_reset
+  16.053 <-- max reset
+  16.139 <-- inf led_toggle:29 led off
+  16.639 <-- inf led_toggle:29 led on
+  17.139 <-- inf led_toggle:29 led off
+  17.639 <-- inf led_toggle:29 led on
+  18.054 --> main_time_exec
+  18.055 <-- main_time_exec
+  18.057 <-- dbg read_line:207 got main_time_exec
+  18.058 <-- iteration avg 5.18 us, max 622 us
+  18.139 <-- inf led_toggle:29 led off
+  18.639 <-- inf led_toggle:29 led on
+  19.062 --> calc_pi
+  19.063 <-- calc_pi
+  19.064 <-- dbg read_line:207 got calc_pi
+  28.462 <-- pi: 3.14159165
+  28.463 <-- time: 9397 ms
+  28.463 <-- inf led_toggle:29 led off
+  28.962 <-- inf led_toggle:29 led on
+  29.462 <-- inf led_toggle:29 led off
+  29.962 <-- inf led_toggle:29 led on
+  30.172 --> clk_sys_default
+  30.174 <-- clk_sys_default
+  30.175 <-- dbg read_line:207 got clk_sys_default
+  30.176 <-- inf clk_sys_set:58 clk_sys 125000 kHz
+  30.462 <-- inf led_toggle:29 led off
+  30.962 <-- inf led_toggle:29 led on
+  31.368 --> clk_info
+  31.369 <-- clk_info
+  31.370 <-- dbg read_line:207 got clk_info
+  31.371 <-- signal     set_khz measured_khz
+  31.372 <-- clk_ref      12000        12001
+  31.373 <-- clk_sys     125000       125000
+  31.374 <-- clk_peri     48000        48000
+  31.375 <-- clk_usb      48000        48000
+  31.376 <-- clk_adc      48000        48000
+  31.377 <-- rosc             -         5626
+  31.461 <-- inf led_toggle:29 led off
+  31.962 <-- inf led_toggle:29 led on
+  32.376 --> calc_pi
+  32.377 <-- calc_pi
+  32.378 <-- dbg read_line:207 got calc_pi
+  37.077 <-- pi: 3.14159165
+  37.077 <-- time: 4698 ms
+  37.079 <-- inf led_toggle:29 led off
+  37.576 <-- inf led_toggle:29 led on
+  38.076 <-- inf led_toggle:29 led off
+итог: отправлено команд 14, принято строк 103
