@@ -25,14 +25,15 @@ void device_info(void)              // функция без аргументо�
     uint32_t part         = (id & SYSINFO_CHIP_ID_PART_BITS)         >> SYSINFO_CHIP_ID_PART_LSB;         // то же для поля part (модель чипа)
     uint32_t revision     = (id & SYSINFO_CHIP_ID_REVISION_BITS)     >> SYSINFO_CHIP_ID_REVISION_LSB;     // то же для поля revision (ревизия чипа)
 
-    // 3. печать паспорта
+    //печать паспорта
 
     printf("device: %s %s\n", DEVICE_NAME, FIRMWARE_VERSION); //имя и версия
     printf("project: %s\n", DEVICE_PROJECT); // напечатать «project: <имя проекта>» и перевод строки (%s — подставить строку)
     printf("repo: %s\n", DEVICE_REPO);  // напечатать «repo: <адрес репозитория>»
     printf("board: %s\n", DEVICE_BOARD);   // напечатать «board: <имя платы>»
     printf("serial: %s\n", board_id);  // напечатать «serial: <серийный номер>» из шага 1
-    printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n", manufacturer, part, revision);// напечатать поля чипа: %03x — hex минимум 3 цифры, %04x — hex минимум 4, %u — десятичное подставить значения
+    //printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n", manufacturer, part, revision);// напечатать поля чипа: %03x — hex минимум 3 цифры, %04x — hex минимум 4, %u — десятичное подставить значения
+    printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n", (unsigned)manufacturer, (unsigned)part, (unsigned)revision);  // (unsigned int) для %x и %u
     printf("pico-sdk: %s\n", PICO_SDK_VERSION_STRING);   //напечатать «pico-sdk: <версия SDK>»
 }
 

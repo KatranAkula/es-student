@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
+#include "led-task.h"
 
 //набор команд
 
@@ -36,6 +37,42 @@ static void cmd_main_time_reset(const command_t *command)
     profiling_reset_max();
     printf("max reset\n");
 }
+
+//команды светодиода состояние и период
+static void print_led_state(void)
+{
+    static const char *names[] = {
+        [LED_STATE_OFF]   = "off",
+        [LED_STATE_ON]    = "on",
+        [LED_STATE_BLINK] = "blink",
+    };
+    printf("led: %s, period %u ms\n",
+           names[led_task_get_state()],
+           (unsigned)led_task_get_period_ms());
+}
+
+static void cmd_led_enable(const command_t *command)
+{
+    (void)command;
+    led_task_set_state(LED_STATE_ON);
+    print_led_state();
+}
+
+static void cmd_led_disable(const command_t *command)
+{
+    (void)command;
+    led_task_set_state(LED_STATE_OFF);
+    print_led_state();
+}
+
+static void cmd_led_blink(const command_t *command)
+{
+    (void)command;
+    led_task_set_state(LED_STATE_BLINK);
+    print_led_state();
+}
+
+
 
 //считает Пи
 
@@ -76,6 +113,27 @@ static bool parse_u32(const char *text, uint32_t *value)
 
     *value = (uint32_t)number;
     return true;
+}
+
+
+
+static void cmd_led_period(const command_t *command)
+{
+    uint32_t period_ms;
+
+    if (command->argc != 1 || !parse_u32(command->argv[0], &period_ms))
+    {
+        printf("error: usage led_period <period_ms>\n");
+        return;
+    }
+
+    if (!led_task_set_period_ms(period_ms))
+    {
+        printf("error: period_ms must be greater than 0\n");
+        return;
+    }
+
+    print_led_state();
 }
 
 static void cmd_calc_pi(const command_t *command) //считает Пи с n членами ряда, замеряет время и выводит в терминал
@@ -121,6 +179,10 @@ static const api_command_t commands[] = {
     { "calc_pi",         "calculate pi: calc_pi [terms]", cmd_calc_pi },
     { "main_time_exec",  "superloop iteration: average and maximum", cmd_main_time_exec },
     { "main_time_reset", "reset maximum iteration", cmd_main_time_reset },
+    { "led_enable",      "turn led on",           cmd_led_enable  },    
+    { "led_disable",     "turn led off",          cmd_led_disable },    
+    { "led_blink",       "blink led",             cmd_led_blink   },   
+    { "led_period",      "set blink period, ms",  cmd_led_period  },   
 };
 
 static const uint32_t commands_count = sizeof(commands) / sizeof(commands[0]);

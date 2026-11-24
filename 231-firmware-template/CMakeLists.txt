@@ -10,26 +10,30 @@ set(CMAKE_CXX_STANDARD 17)
 
 pico_sdk_init()
 
+add_compile_options(-Wall)
+
 # Исходные файлы проекта 
 add_executable(${PROJECT_NAME}
     main.c
-    led/led.c
+    # led/led.c
     logging/log.c
     device/device.c
     profiling/profiling.c
     stdio-text-protocol/stdio-text-protocol.c
     api/api.c
+    led-task/led-task.c
 )
 
 # Пути поиска заголовков добавляем корень проекта и все подпапки с заголовками
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/led
+    # ${CMAKE_CURRENT_SOURCE_DIR}/led
     ${CMAKE_CURRENT_SOURCE_DIR}/logging
     ${CMAKE_CURRENT_SOURCE_DIR}/device
     ${CMAKE_CURRENT_SOURCE_DIR}/profiling
      ${CMAKE_CURRENT_SOURCE_DIR}/stdio-text-protocol
     ${CMAKE_CURRENT_SOURCE_DIR}/api
+    ${CMAKE_CURRENT_SOURCE_DIR}/led-task # вместо /led
 )
 
 #библиотеки SDK
