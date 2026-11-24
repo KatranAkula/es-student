@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <ctype.h>
 #include "led-task.h"
+#include "led-task.h"
+#include "button-task.h" // для button_task_is_pressed() и счётчика нажатий
 
 //набор команд
 
@@ -136,6 +138,16 @@ static void cmd_led_period(const command_t *command)
     print_led_state();
 }
 
+//команда кнопки: состояние и число нажатий
+static void cmd_button(const command_t *command)
+{
+    (void)command; //аргументы не нужны
+    printf("button: %s, presses %lu\n",
+           button_task_is_pressed() ? "pressed" : "released",
+           (unsigned long)button_task_get_press_count());
+}
+
+
 static void cmd_calc_pi(const command_t *command) //считает Пи с n членами ряда, замеряет время и выводит в терминал
 {
     uint32_t terms = CALC_PI_TERMS_DEFAULT;
@@ -182,7 +194,8 @@ static const api_command_t commands[] = {
     { "led_enable",      "turn led on",           cmd_led_enable  },    
     { "led_disable",     "turn led off",          cmd_led_disable },    
     { "led_blink",       "blink led",             cmd_led_blink   },   
-    { "led_period",      "set blink period, ms",  cmd_led_period  },   
+    { "led_period",      "set blink period, ms",  cmd_led_period  },  
+    { "button",          "button state and press count", cmd_button }, 
 };
 
 static const uint32_t commands_count = sizeof(commands) / sizeof(commands[0]);

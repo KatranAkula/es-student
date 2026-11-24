@@ -7,6 +7,7 @@
 #include "profiling.h"
 #include "stdio-text-protocol.h" //для command_t и stdio_text_protocol_handle()
 #include "api.h"                 //для api_handle()
+#include "button-task.h" // задача кнопки: дребезг машиной состояний
 
 //УДАЛЕНО!!! #define LINE_SIZE, char line[], uint line_length
 // Всё, что связано с приёмом строки, теперь в stdio-text-protocol.
@@ -38,15 +39,17 @@ void blink(void) //функция мигания, вызывается кажд�
 }
 */
 
-
 int main()
 {
     stdio_init_all(); // инициализация ввода-вывода
-    //led_init(); // модуль сам настроит пин 25
     led_task_init();  //вместо led_init() — задача сама настроит пин
     profiling_init(); // запоминает начальное показание часов для профилирования
 
     stdio_text_protocol_init(); //инициализация протокола
+
+    
+    button_task_init(); //GPIO кнопки: вход с подтяжкой к питанию
+
 
     while (1)
     {
@@ -61,7 +64,8 @@ int main()
             api_handle(command); // выполняем команду
         }
 
-         led_task_handle();             //задача светодиода — каждый цикл
+        button_task_handle(); //машина кнопки — каждый цикл, без пауз
+        led_task_handle();    //задача светодиода — каждый цикл
 
 
     }

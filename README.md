@@ -28,7 +28,7 @@
 ![](https://github.com/KatranAkula/es-student/actions/workflows/check-2-2-5.yml/badge.svg)
 
 ![](https://github.com/KatranAkula/es-student/actions/workflows/check-2-3-1.yml/badge.svg)
-# ![](https://github.com/KatranAkula/es-student/actions/workflows/check-2-3-2.yml/badge.svg)
+![](https://github.com/KatranAkula/es-student/actions/workflows/check-2-3-2.yml/badge.svg)
 # ![](https://github.com/KatranAkula/es-student/actions/workflows/check-2-3-3.yml/badge.svg)
 # ![](https://github.com/KatranAkula/es-student/actions/workflows/check-2-3-4.yml/badge.svg)
 # ![](https://github.com/KatranAkula/es-student/actions/workflows/check-2-3-5.yml/badge.svg)

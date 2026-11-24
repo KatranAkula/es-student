@@ -49,6 +49,25 @@ led_state_t led_task_get_state(void) //чтение состояния
     return led_state; //возвращаем static-переменную
 }
 
+void led_task_next_state(void) //следующее состояние по кругу: OFF - ON - BLINK - OFF
+{
+    switch (led_state) { //смотрим, где стоим сейчас
+    case LED_STATE_OFF:   //из «выключен»
+        led_task_set_state(LED_STATE_ON);    //в «горит»
+        break;
+    case LED_STATE_ON:   //из «горит»
+        led_task_set_state(LED_STATE_BLINK); //в «мигает»
+        break;
+    case LED_STATE_BLINK:  //из «мигает»
+        led_task_set_state(LED_STATE_OFF);   //в «выключен»
+        break;
+    }
+}
+
+
+
+
+
 bool led_task_set_period_ms(uint32_t new_period_ms)  //установка периода
 {
     if (new_period_ms == 0) {  //ноль недопустим
