@@ -77,7 +77,7 @@ static void cmd_led_blink(const command_t *command)
 
 
 //считает Пи
-
+/*
 // Прикидка: за член ряда 4 операции с double, 175 + 110 + 190 + 110 = 585 тактов; 
 // 1 000 000 членов по 585 тактов при 125 МГц — около 4,7 с
 const uint CALC_PI_TERMS_DEFAULT = 1000000;
@@ -95,7 +95,7 @@ static double calc_pi(uint terms)
 
     return sum * 4.0;
 }
-
+*/
 
 
 //разбирает числа без знака
@@ -149,7 +149,7 @@ static void cmd_button(const command_t *command)
            (unsigned long)button_task_get_press_count());
 }
 
-
+/*
 static void cmd_calc_pi(const command_t *command) //считает Пи с n членами ряда, замеряет время и выводит в терминал
 {
     uint32_t terms = CALC_PI_TERMS_DEFAULT;
@@ -175,7 +175,7 @@ static void cmd_calc_pi(const command_t *command) //считает Пи с n ч�
     printf("pi: %.9f\n", pi_result);
     printf("time: %llu ms\n", spent_us / 1000);
 }
-
+*/
 
 
 //комнады расчёта Пи
@@ -245,7 +245,7 @@ typedef struct
 static const api_command_t commands[] = {
     { "info",            "device passport", cmd_info },
     { "uptime",          "time since reset", cmd_uptime },
-    { "calc_pi",         "calculate pi: calc_pi [terms]", cmd_calc_pi },
+    // { "calc_pi",         "calculate pi: calc_pi [terms]", cmd_calc_pi },
     { "main_time_exec",  "superloop iteration: average and maximum", cmd_main_time_exec },
     { "main_time_reset", "reset maximum iteration", cmd_main_time_reset },
     { "led_enable",      "turn led on",           cmd_led_enable  },    
