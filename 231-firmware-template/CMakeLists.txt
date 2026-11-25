@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}
     api/api.c
     led-task/led-task.c
     button-task/button-task.c
+    pi-task/pi-task.c
 )
 
 # Пути поиска заголовков добавляем корень проекта и все подпапки с заголовками
@@ -35,6 +36,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/api
     ${CMAKE_CURRENT_SOURCE_DIR}/led-task # вместо /led
     ${CMAKE_CURRENT_SOURCE_DIR}/button-task
+    ${CMAKE_CURRENT_SOURCE_DIR}/pi-task
 )
 
 #библиотеки SDK

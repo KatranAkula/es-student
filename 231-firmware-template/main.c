@@ -8,6 +8,7 @@
 #include "stdio-text-protocol.h" //для command_t и stdio_text_protocol_handle()
 #include "api.h"                 //для api_handle()
 #include "button-task.h" // задача кнопки: дребезг машиной состояний
+#include "pi-task.h"
 
 //УДАЛЕНО!!! #define LINE_SIZE, char line[], uint line_length
 // Всё, что связано с приёмом строки, теперь в stdio-text-protocol.
@@ -66,6 +67,7 @@ int main()
 
         button_task_handle(); //машина кнопки — каждый цикл, без пауз
         led_task_handle();    //задача светодиода — каждый цикл
+        pi_task_handle();
 
 
     }

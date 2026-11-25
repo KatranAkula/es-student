@@ -8,8 +8,8 @@
 #include <errno.h>
 #include <ctype.h>
 #include "led-task.h"
-#include "led-task.h"
 #include "button-task.h" // для button_task_is_pressed() и счётчика нажатий
+#include "pi-task.h"
 
 //набор команд
 
@@ -78,7 +78,7 @@ static void cmd_led_blink(const command_t *command)
 
 //считает Пи
 
-// Прикидка: за член ряда 4 операции с double, 175 + 110 + 190 + 110 = 585 тактов;
+// Прикидка: за член ряда 4 операции с double, 175 + 110 + 190 + 110 = 585 тактов; 
 // 1 000 000 членов по 585 тактов при 125 МГц — около 4,7 с
 const uint CALC_PI_TERMS_DEFAULT = 1000000;
 
@@ -95,6 +95,8 @@ static double calc_pi(uint terms)
 
     return sum * 4.0;
 }
+
+
 
 //разбирает числа без знака
 static bool parse_u32(const char *text, uint32_t *value)
@@ -174,6 +176,61 @@ static void cmd_calc_pi(const command_t *command) //считает Пи с n ч�
     printf("time: %llu ms\n", spent_us / 1000);
 }
 
+
+
+//комнады расчёта Пи
+
+static void cmd_pi_start(const command_t *command)
+{
+    uint32_t terms = 1000000;   // значение по умолчанию
+
+    if (command->argc > 0)
+    {
+        if (command->argc > 1 || !parse_u32(command->argv[0], &terms))
+        {
+            printf("error: usage pi_start [<terms>]\n");
+            return;
+        }
+        if (terms == 0)
+        {
+            printf("error: terms must be greater than 0\n");
+            return;
+        }
+    }
+
+    if (!pi_task_start(terms))
+    {
+        printf("error: pi is busy\n");
+        return;
+    }
+
+    printf("pi: started, %u terms\n", (unsigned)terms);
+}
+
+static void cmd_pi(const command_t *command)
+{
+    (void)command;
+
+    double result;
+    uint32_t spent_ms;
+
+    if (pi_task_get_result(&result, &spent_ms))
+    {
+        printf("pi: %.9f in %u ms\n", result, (unsigned)spent_ms);
+        return;
+    }
+
+    if (pi_task_get_state() == PI_STATE_RUNNING)
+    {
+        printf("pi: running\n");
+    }
+    else
+    {
+        printf("pi: not started\n");
+    }
+}
+
+
 //таблица команд!!!
 
 typedef void (*api_callback_t)(const command_t *command);
@@ -196,6 +253,8 @@ static const api_command_t commands[] = {
     { "led_blink",       "blink led",             cmd_led_blink   },   
     { "led_period",      "set blink period, ms",  cmd_led_period  },  
     { "button",          "button state and press count", cmd_button }, 
+     { "pi_start",        "start pi calculation: pi_start [terms]", cmd_pi_start }, 
+    { "pi",              "pi result or state",    cmd_pi          },                
 };
 
 static const uint32_t commands_count = sizeof(commands) / sizeof(commands[0]);
