@@ -35,7 +35,7 @@ static void cmd_info(const command_t *command) //обработчик коман
            (unsigned)info.manufacturer,  //производитель, hex
            (unsigned)info.part, //изделие, hex
            (unsigned)info.revision);  //ревизия, dec
-    printf("pico-sdk: %s\n", info.sdk_version);//версия SDK (из структуры)
+    printf("pico-sdk: %s\n", info.sdk_version);//версия SDK (из структуры) 
 }
 
 

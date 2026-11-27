@@ -7,7 +7,7 @@
 #define PROFILING_MAX_STOPWATCHES 8
 
 // по умолчанию профилирование включено
-#ifndef PROFILING_ENABLED
+#ifndef PROFILING_ENABLED 
 #define PROFILING_ENABLED 1
 #endif
 

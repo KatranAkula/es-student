@@ -21,7 +21,7 @@ void profiling_stopwatch_init(uint32_t id, const char *name) //завести с
     stopwatches[id].sum_us   = 0; //сумма ноль
     stopwatches[id].max_us   = 0;   //максимум ноль
     stopwatches[id].start_us = 0;   //старт не было
-    stopwatches[id].used     = true; //помечаем: секундомер существует
+    stopwatches[id].used     = true; //помечаем: секундомер существует 
 }
 
 #if PROFILING_ENABLED

@@ -50,7 +50,7 @@ target_link_libraries(${PROJECT_NAME}
     pico_stdlib
     logging
     device
-    profiling
+    profiling 
     systime
     stdio_text_protocol
     # //
