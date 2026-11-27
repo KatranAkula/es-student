@@ -1,15 +1,30 @@
-#pragma once // чтобы заголовок не подключался дважды (забор от двойного включения)
+#pragma once
 
-#include <stdint.h>   //нужен для uint8_t и uint32_t
+#include <stdint.h>
 
-#define DEVICE_NAME "231-firmware_:-)" // имя устройства (используется в log_version для печати «device: ...»)
-#define FIRMWARE_VERSION "1.0.1.0.1" //версия прошивки (тоже печатается в log_version)
+//Константы прошивки
+#define DEVICE_NAME       "231-firmware_:-)"
+#define FIRMWARE_VERSION  "1.0.1.0.1"
+#define DEVICE_PROJECT    "231-firmware-template"
+#define DEVICE_REPO       "https://github.com/KatranAkula/es-student"
 
-#define DEVICE_PROJECT "231-firmware-template"       //печатается в info как «project: 231-firmware-template»
-#define DEVICE_REPO "https://github.com/KatranAkula/es-student" //адрес репозитория: печатается в info как «repo: ...»
+#ifndef DEVICE_BOARD
+#define DEVICE_BOARD "unknown"
+#endif
 
-#ifndef DEVICE_BOARD     //если DEVICE_BOARD ещё не определён снаружи (например, из CMakeLists.txt)
-#define DEVICE_BOARD "unknown"        // макрос с именем DEVICE_BOARD. везде, где встретишь DEVICE_BOARD, подставь "unknown"
-#endif             //endif всегда закрывает ifndef
+//Структура со сведениями о плате
+#define DEVICE_SERIAL_SIZE 17   // 16 hex + '\0'
+#define DEVICE_BOARD_SIZE  32
+#define DEVICE_SDK_SIZE    16
 
-void device_info(void);       //объявляю функции: она есть в device.c, а вызывать её можно отсюда
+typedef struct {
+    char     board[DEVICE_BOARD_SIZE];
+    char     serial[DEVICE_SERIAL_SIZE];
+    uint32_t manufacturer;
+    uint32_t part;
+    uint32_t revision;
+    char     sdk_version[DEVICE_SDK_SIZE];
+} device_info_t;
+
+// Заполнить структуру сведениями о плате. Не печатает.
+void device_get_info(device_info_t *info);
