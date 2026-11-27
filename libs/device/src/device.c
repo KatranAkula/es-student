@@ -1,4 +1,4 @@
-#include "device.h"   // мой заголовок: там лежат DEVICE_PROJECT, DEVICE_REPO, DEVICE_BOARD
+#include "device/device.h"   //мой заголовок: типы и прототипы
 
 #include <stddef.h>    //нужен для работы offsetof
 #include <stdint.h> //нужен для uintptr_t
@@ -15,7 +15,7 @@
 void device_get_info(device_info_t *info)
 {
     //тип платы
-    strncpy(info->board, DEVICE_BOARD, sizeof(info->board) - 1);
+    strncpy(info->board, PICO_BOARD, sizeof(info->board) - 1); //PICO_BOARD — имя платы из SDK, задаётся при сборке
     info->board[sizeof(info->board) - 1] = '\0';
 
     //серийный номер

@@ -1,8 +1,8 @@
 // button-task.c — задача дребезг подавляет машина состояний без пауз
-#include "button-task.h"   //свой заголовок первым
-#include "led-task.h"      //для led_task_next_state() при подтверждённом нажатии
-#include "pico/stdlib.h"   //SDK: gpio, time_us_64
-#include "hardware/gpio.h" //gpio_init/gpio_get/gpio_pull_up
+#include "button-task.h"       //свой заголовок первым
+#include "led-task.h"          //для led_task_next_state() при подтверждённом нажатии
+#include "systime/systime.h"   //время — из библиотеки
+#include "hardware/gpio.h"     //gpio_init/gpio_get/gpio_pull_up
 
 #define BUTTON_PIN        15      //GP15, кнопка между выводом и землёй
 #define DEBOUNCE_TIME_US  20000   //порог дребезга 20 мс в микросекундах
@@ -14,7 +14,7 @@ typedef enum { //четыре состояния машины кнопки
     BUTTON_RELEASING,   //отпускание? — ждём подтверждения 20 мс
 } button_state_t;       //имя типа для static-переменной
 
-static button_state_t button_state;  //текущее состояние, static = не видно снаружи
+static button_state_t button_state;   //текущее состояние, static = не видно снаружи
 static uint64_t       button_state_time_us;//метка входа в текущее состояние
 static uint32_t       button_press_count; //счётчик подтверждённых нажатий
 
@@ -37,7 +37,7 @@ void button_task_init(void) //инициализация, один раз из m
 void button_task_handle(void) //обработчик, зовёт суперцикл
 {
     bool     pressed = read_pressed();  //читаем уровень один раз
-    uint64_t now_us  = time_us_64();    //читаем часы один раз
+    uint64_t now_us  = systime_us();    //читаем часы один раз
 
     switch (button_state) { //переходы по таблице из ТЗ
     case BUTTON_RELEASED:   //отпущена

@@ -1,29 +1,14 @@
-// led-task.c — задача светодиода    
-#include "led-task.h"   //свой заголовок первым
-#include "pico/stdlib.h"  //SDK только реализации
+// led-task.c — задача светодиода
+#include "led-task.h"          //свой заголовок первым
+#include "systime/systime.h"   //время и проверка периода — из библиотеки
+#include "hardware/gpio.h" //gpio_init, gpio_put, gpio_set_dir, GPIO_OUT, PICO_DEFAULT_LED_PIN
 
-static led_state_t led_state;   //текущее состояние, static = не видно снаружи
-static uint32_t    period_ms;  //период в мс (для get)
-static uint64_t    half_period_us; //полупериод в мкс (для сравнения с time_us_64)
-static uint64_t    last_toggle_us;  //метка прошлого переключения
-static bool        led_level;  //текущий уровень вывода
 
-static bool period_elapsed(uint64_t *last_us, uint64_t period_us)//проверка периода, static = внутренняя
-{
-    uint64_t now_us = time_us_64();  //читаем часы один раз
-
-    if (now_us - *last_us < period_us) {//период ещё не истёк?
-        return false;           //нет — выходим
-    }
-
-    *last_us += period_us; //следующее — от прошлой метки (+= ищет проверка)
-
-    if (now_us - *last_us >= period_us) { //отстали больше чем на период?
-        *last_us = now_us;   //да — не догоняем, начинаем заново
-    }
-
-    return true;  //период истёк
-}
+static led_state_t led_state;      //текущее состояние, static = не видно снаружи
+static uint32_t    period_ms;      //период в мс (для get)
+static uint64_t    half_period_us; //полупериод в мкс (для сравнения с systime_us)
+static uint64_t    last_toggle_us; //метка прошлого переключения
+static bool        led_level;      //текущий уровень вывода
 
 void led_task_set_state(led_state_t state) //единственная точка смены состояния
 {
@@ -39,7 +24,7 @@ void led_task_set_state(led_state_t state) //единственная точка
         gpio_put(PICO_DEFAULT_LED_PIN, true);//зажигаем
         break;
     case LED_STATE_BLINK:  //вход в «мигает»
-        last_toggle_us = time_us_64() - half_period_us; // метка в прошлое — первое переключение сразу
+        last_toggle_us = systime_us() - half_period_us; // метка в прошлое — первое переключение сразу
         break;
     }
 }
@@ -63,10 +48,6 @@ void led_task_next_state(void) //следующее состояние по кр
         break;
     }
 }
-
-
-
-
 
 bool led_task_set_period_ms(uint32_t new_period_ms)  //установка периода
 {
@@ -98,10 +79,10 @@ void led_task_handle(void)  //обработчик, зовёт суперцик�
 {
     switch (led_state) {  //что делать внутри состояния
     case LED_STATE_OFF:  //«выключен»
-    case LED_STATE_ON:      //«горит» — обрабатываются одинаково
-        break;    //вывод уже установлен при входе
-    case LED_STATE_BLINK:  //«мигает»
-        if (period_elapsed(&last_toggle_us, half_period_us)) { // пора переключать?
+    case LED_STATE_ON:   //«горит» — обрабатываются одинаково
+        break;           //вывод уже установлен при входе
+    case LED_STATE_BLINK: //«мигает»
+        if (systime_period_elapsed(&last_toggle_us, half_period_us)) { // пора переключать?
             led_level = !led_level;  //инвертируем уровень
             gpio_put(PICO_DEFAULT_LED_PIN, led_level); // пишем в вывод
         }

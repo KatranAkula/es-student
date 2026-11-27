@@ -1,5 +1,5 @@
-#include "profiling.h" //заголовок модуля: типы и прототипы
-#include "pico/stdlib.h"    //SDK: нужен time_us_64()
+#include "profiling/profiling.h" //заголовок модуля: типы и прототипы
+#include "systime/systime.h"     //время — из библиотеки
 
 typedef struct {   //внутренняя структура одного секундомера
     const char *name;  //имя: "loop", "led", "pi"...
@@ -27,14 +27,14 @@ void profiling_stopwatch_init(uint32_t id, const char *name) //завести с
 void profiling_start(uint32_t id)   //    запустить замер
 {
     if (id >= PROFILING_MAX_STOPWATCHES || !stopwatches[id].used) return; //нет такого — выходим
-    stopwatches[id].start_us = time_us_64(); //запоминаем момент старта в мкс
+    stopwatches[id].start_us = systime_us(); //запоминаем момент старта в мкс
 }
 
 void profiling_stop(uint32_t id)   //остановить замер и учесть его
 {
     if (id >= PROFILING_MAX_STOPWATCHES || !stopwatches[id].used) return; //нет такого — выходим
 
-    uint32_t spent = (uint32_t)(time_us_64() - stopwatches[id].start_us); //сколько прошло, мкс
+    uint32_t spent = (uint32_t)(systime_us() - stopwatches[id].start_us); //сколько прошло, мкс
     stopwatches[id].count++;    // ещё один замер
     stopwatches[id].sum_us += spent; //добавляем в сумму (переполнится через 71 мин)
     if (spent > stopwatches[id].max_us) { //если это самый долгий замер
@@ -48,8 +48,7 @@ bool profiling_get(uint32_t id, profiling_result_t *result) //забрать р�
 
     result->name    = stopwatches[id].name; //имя
     result->count   = stopwatches[id].count; //число замеров
-    //result->mean_us = stopwatches[id].count ? stopwatches[id].sum_us / stopwatches[id].count : 0; //среднее (защита от /0)
-    result->mean_us = stopwatches[id].count ? (double)stopwatches[id].sum_us / stopwatches[id].count//коррекция для вывода с дробью
+    result->mean_us = stopwatches[id].count ? (double)stopwatches[id].sum_us / stopwatches[id].count //коррекция для вывода с дробью
     : 0.0;
     result->max_us  = stopwatches[id].max_us; //максимум
     return true;        ///результат есть

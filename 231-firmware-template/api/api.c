@@ -1,7 +1,8 @@
 #include "api.h"
 #include "pico/stdlib.h"
-#include "device.h"
-#include "profiling.h"
+#include "device/device.h"
+#include "profiling/profiling.h"
+#include "firmware.h"          //константы прошивки
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -10,6 +11,8 @@
 #include "led-task.h"
 #include "button-task.h"
 #include "pi-task.h"
+
+
 
 //набор команд
 
@@ -21,9 +24,9 @@ static void cmd_info(const command_t *command) //обработчик коман
     device_info_t info;//структура со сведениями о плате
     device_get_info(&info);  //заполнить её по указателю
 
-    printf("device: %s %s\n", DEVICE_NAME, FIRMWARE_VERSION); // имя и версия прошивки
-    printf("project: %s\n", DEVICE_PROJECT);//имя проекта
-    printf("repo: %s\n", DEVICE_REPO);//адрес репозитория
+    printf("device: %s %s\n", FIRMWARE_NAME, FIRMWARE_VERSION); // имя и версия прошивки
+    printf("project: %s\n", FIRMWARE_PROJECT);//имя проекта
+    printf("repo: %s\n", FIRMWARE_REPO);//адрес репозитория
     printf("board: %s\n", info.board);//тип платы (из структуры)
     printf("serial: %s\n", info.serial); //серийный номер (из структуры)
     printf("chip: manufacturer 0x%03x, part 0x%04x, revision %u\n",
@@ -152,13 +155,12 @@ static void cmd_profiling(const command_t *command)  //обработчик prof
         printf("%-10s count %-10u mean %.2f us  max %u us\n", // шаблон строки
                r.name, //имя секундомера
                (unsigned)r.count,  //число замеров
-               //(double)r.mean_us,  //среднее, мкс выводит баз дроби - потому что приводит uint32_t к double!!!!
-               r.mean_us,  //чтобы вывод был с дробью!!!
+               r.mean_us,  //чтобы вывод был с дробью
                (unsigned)r.max_us);//максимум, мкс
     }
 }
 
-//profiling_reset: сбросить все секундомеры!!!!!!
+//profiling_reset: сбросить все секундомеры
 static void cmd_profiling_reset(const command_t *command)// обработчик profiling_reset
 {
     (void)command;  //аргументы не нужны
@@ -300,5 +302,3 @@ void api_handle(const command_t *command)//главный обработчик
     printf("error: unknown command '%s', try help\n", command->name); //неизвестная команда - ошибка
 
 }
-
-
