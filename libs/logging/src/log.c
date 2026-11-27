@@ -1,6 +1,6 @@
-//#include "log.h"  //заголовок: там объявления log_version, log_prefix и макросы LOG_ERR/INF/DBG
+//теперь libs\logging\include\logging\logging.h вместо  lids#include "лог.h"  
 #include "logging/logging.h"
-//#include "device.h"  //нужен для DEVICE_NAME и FIRMWARE_VERSION (используются в log_version)
+//#include "device.h"  //нужен для DEVICE_NAME и FIRMWARE_VERSION (используются в лог_version)
 
 void log_prefix(const char *level, const char *function, int line) //напечатать префикс перед сообщением лога
 {

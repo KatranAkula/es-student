@@ -1,7 +1,9 @@
+//api.c
 #include "api.h"
-#include "pico/stdlib.h"
+//#include "pico/stdlib.h" удалён: проект не должен тянуть SDK напрямую, время берём из библиотеки systime
 #include "device/device.h"
 #include "profiling/profiling.h"
+#include "systime/systime.h"   //добавлен: systime_ms() для uptime
 #include "firmware.h"          //константы прошивки
 #include <stdio.h>
 #include <string.h>
@@ -16,7 +18,7 @@
 
 //набор команд
 
-// ── info: печатает паспорт из структуры ───────────────────
+//info: печатает паспорт из структуры
 static void cmd_info(const command_t *command) //обработчик команды info
 {
     (void)command;  //аргументы не нужны
@@ -36,12 +38,12 @@ static void cmd_info(const command_t *command) //обработчик коман
     printf("pico-sdk: %s\n", info.sdk_version);//версия SDK (из структуры)
 }
 
+
 static void cmd_uptime(const command_t *command)  //обработчик uptime
 {
     (void)command;  //аргументы не нужны
-    printf("uptime: %llu ms\n", time_us_64() / 1000);//время с момента сброса в мс
+    printf("uptime: %lu ms\n", (unsigned long)systime_ms());//время с момента сброса в мс
 }
-
 
 
 
@@ -117,13 +119,13 @@ static void cmd_led_period(const command_t *command) //обработчик led_
     if (command->argc != 1 || !parse_u32(command->argv[0], &period_ms)) // ровно 1 аргумент и это число?
     {
         printf("error: usage led_period <period_ms>\n");//нет — подсказка
-        return;    
+        return;
     }
 
     if (!led_task_set_period_ms(period_ms)) //задача не приняла период?
     {
         printf("error: period_ms must be greater than 0\n"); // ноль — отдельное сообщение
-        return;    
+        return;
     }
 
     print_led_state(); //напечатать состояние и период
@@ -147,6 +149,8 @@ static void cmd_profiling(const command_t *command)  //обработчик prof
 {
     (void)command;  //аргументы не нужны
 
+    //ответ обёрнут выключателем: в сборке без профилирования — короткое сообщение
+#if PROFILING_ENABLED
     for (uint32_t i = 0; i < PROFILING_MAX_STOPWATCHES; i++) // по всем номерам секундомеров
     {
         profiling_result_t r;//результат по одному секундомеру
@@ -158,13 +162,16 @@ static void cmd_profiling(const command_t *command)  //обработчик prof
                r.mean_us,  //чтобы вывод был с дробью
                (unsigned)r.max_us);//максимум, мкс
     }
+#else
+    printf("profiling is disabled in this build\n");//выключенная сборка: обязательный ответ
+#endif
 }
 
 //profiling_reset: сбросить все секундомеры
 static void cmd_profiling_reset(const command_t *command)// обработчик profiling_reset
 {
     (void)command;  //аргументы не нужны
-    profiling_reset(); //сбросить все счётчики
+    profiling_reset(); //сбросить все счётчики (объявлена вне выключателя — работает в любой сборке)
     printf("profiling reset\n");//подтвердить сброс
 }
 
@@ -182,19 +189,19 @@ static void cmd_pi_start(const command_t *command)//обработчик pi_star
         if (command->argc > 1 || !parse_u32(command->argv[0], &terms)) // больше 1 или не число?
         {
             printf("error: usage pi_start [<terms>]\n");//подсказка
-            return;   
+            return;
         }
         if (terms == 0)//ноль членов?
         {
             printf("error: terms must be greater than 0\n"); // отдельное сообщение
-            return;   
+            return;
         }
     }
 
     if (!pi_task_start(terms))  //задача уже считает?
     {
         printf("error: pi is busy\n");//отказ
-        return;    
+        return;
     }
 
     printf("pi: started, %u terms\n", (unsigned)terms); //запущено
@@ -213,7 +220,7 @@ static void cmd_pi(const command_t *command)//обработчик pi
     if (pi_task_get_result(&result, &spent_ms))//результат готов?
     {
         printf("pi: %.9f in %u ms\n", result, (unsigned)spent_ms); // напечатать
-        return;    
+        return;
     }
 
 
@@ -243,7 +250,7 @@ typedef struct//запись таблицы команд
 static const api_command_t commands[] = {//таблица команд
 
     { "info",            "device passport", cmd_info },  //паспорт
-    { "uptime",          "time since reset", cmd_uptime },  // время с момента сброса    
+    { "uptime",          "time since reset", cmd_uptime },  // время с момента сброса
     { "led_enable",      "turn led on",           cmd_led_enable  }, //светодиод вкл
     { "led_disable",     "turn led off",          cmd_led_disable }, //светодиод выкл
     { "led_blink",       "blink led",             cmd_led_blink   }, //светодиод мигает
@@ -253,9 +260,6 @@ static const api_command_t commands[] = {//таблица команд
     { "pi",              "pi result or state",    cmd_pi          }, //результат π
     { "profiling",       "show all stopwatches",  cmd_profiling   }, //секундомеры
     { "profiling_reset", "reset stopwatches",     cmd_profiling_reset }, // сброс
-
-
-
 
 };
 
@@ -268,7 +272,7 @@ void api_handle(const command_t *command)//главный обработчик
     if (command->truncated)  //строка не поместилась?
     {
         printf("error: command longer than 63 characters or 4 arguments\n"); // ошибка
-        return;    
+        return;
     }
 
  //help
@@ -281,7 +285,7 @@ void api_handle(const command_t *command)//главный обработчик
         {
             printf("%-16s %s\n", commands[i].name, commands[i].help); //имя и справка
         }
-        return;    
+        return;
     }
 
 
@@ -292,13 +296,13 @@ void api_handle(const command_t *command)//главный обработчик
         if (strcmp(command->name, commands[i].name) == 0)// имя совпало?
         {
             commands[i].callback(command);  //вызвать обработчик
-            return;   
+            return;
         }
 
 
     }
 
- 
+
     printf("error: unknown command '%s', try help\n", command->name); //неизвестная команда - ошибка
 
 }

@@ -24,6 +24,8 @@ void profiling_stopwatch_init(uint32_t id, const char *name) //завести с
     stopwatches[id].used     = true; //помечаем: секундомер существует
 }
 
+#if PROFILING_ENABLED
+
 void profiling_start(uint32_t id)   //    запустить замер
 {
     if (id >= PROFILING_MAX_STOPWATCHES || !stopwatches[id].used) return; //нет такого — выходим
@@ -41,6 +43,10 @@ void profiling_stop(uint32_t id)   //остановить замер и учес
         stopwatches[id].max_us = spent;  //обновляем максимум
     }
 }
+
+
+#endif // PROFILING_ENABLED
+
 
 bool profiling_get(uint32_t id, profiling_result_t *result) //забрать результат по номеру
 {

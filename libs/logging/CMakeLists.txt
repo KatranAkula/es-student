@@ -1,6 +1,6 @@
 # Библиотека logging: сборка из одного файла реализации
 add_library(logging STATIC
-    src/logging.c
+    src/log.c
 )
 
 # Заголовок открыт всем: #include "logging/logging.h"
