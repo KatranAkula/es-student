@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include "led-task.h"          //задача светодиода
 
-#include "logging/logging.h"   //вместо "log.h"
-#include "device/device.h"     //вместо "device.h" — для device_info()
+#include "logging/logging.h"   //вместо "лог.h"
+#include "device/device.h"     //паспорт платы
 #include "profiling/profiling.h"
 #include "stdio-text-protocol/stdio-text-protocol.h"
 #include "systime/systime.h"   //время и period_elapsed
