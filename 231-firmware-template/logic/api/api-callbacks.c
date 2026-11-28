@@ -211,7 +211,7 @@ static void cmd_pi(const command_t *command)//обработчик pi
 //таблица команд!!! лежит рядом с обработчиками — новая команда требует правки в одном файле
 const api_command_t api_commands[] = {//таблица команд
 
-    { "info",            "device passport (did it in Photoshop)", cmd_info },  //паспорт
+    { "info",            "device passport", cmd_info },  //паспорт
     { "uptime",          "time since reset", cmd_uptime },  // время с момента сброса
     { "led_enable",      "turn led on",           cmd_led_enable  }, //светодиод вкл
     { "led_disable",     "turn led off",          cmd_led_disable }, //светодиод выкл

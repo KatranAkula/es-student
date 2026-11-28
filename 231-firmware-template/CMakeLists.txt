@@ -50,6 +50,8 @@ target_link_libraries(${PROJECT_NAME}
     profiling
     logging
     device
+    systime
+    pico_stdlib  
 )
 
 # Выключатель профилирования: 0 — вызовов секундомеров в образе нет

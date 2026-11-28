@@ -9,7 +9,7 @@ target_include_directories(profiling PUBLIC
 )
 
 # SDK 
-target_link_libraries(profiling 
+target_link_libraries(profiling PRIVATE
     systime
 )
 

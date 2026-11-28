@@ -9,6 +9,6 @@ target_include_directories(systime PUBLIC
 )
 
 # SDK подключаем только для себя (PRIVATE)
-target_link_libraries(systime 
+target_link_libraries(systime PRIVATE
     pico_stdlib
 )

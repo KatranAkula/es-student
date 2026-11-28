@@ -4,7 +4,7 @@
 /*
 //Константы прошивки уехали в firmware.h
 #define DEVICE_NAME       "231-firmware O_o"
-#define FIRMWARE_VERSION  "1.0.2.0.2"
+#define FIRMWARE_VERSION  "1.0.0"
 #define DEVICE_PROJECT    "231-firmware-template"
 #define DEVICE_REPO       "https://github.com/KatranAkula/es-student"
 
