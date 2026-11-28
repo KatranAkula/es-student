@@ -24,9 +24,14 @@ void led_task_set_state(led_state_t state) //единственная точка
         led_level = true;   //уровень = 1
         platform_led_set(true);//зажигаем
         break;
-    case LED_STATE_BLINK:  //вход в «мигает»
-        last_toggle_us = systime_us() - half_period_us; // метка в прошлое — первое переключение сразу
+    case LED_STATE_BLINK: { //вход в «мигает»
+        //защита от underflow: если now < half_period_us, метка в 0
+        uint64_t now = systime_us();                       //текущее время
+        last_toggle_us = (now >= half_period_us)           //не уходим в прошлое до нуля
+        ? (now - half_period_us)
+        : 0;
         break;
+    }
     }
 }
 

@@ -9,7 +9,7 @@
 #define DEVICE_REPO       "https://github.com/KatranAkula/es-student"
 
 #ifndef DEVICE_BOARD
-#define DEVICE_BOARD "купил на Алике"
+#define DEVICE_BOARD "unknow"
 #endif
 */
 

@@ -15,6 +15,7 @@
 
 //содержание api: обработчики команд этого прибора и таблица
 
+
 //info: печатает паспорт из структуры
 static void cmd_info(const command_t *command) //обработчик команды info
 {
@@ -23,7 +24,8 @@ static void cmd_info(const command_t *command) //обработчик коман
     device_info_t info;//структура со сведениями о плате
     device_get_info(&info);  //заполнить её по указателю
 
-    printf("device: %s %s\n", FIRMWARE_NAME, FIRMWARE_VERSION); // имя и версия прошивки
+    printf("name: %s\n", FIRMWARE_NAME);                 //имя прошивки — отдельной строкой
+    printf("version: %s\n", FIRMWARE_VERSION);           //версия прошивки — отдельной строкой
     printf("project: %s\n", FIRMWARE_PROJECT);//имя проекта
     printf("repo: %s\n", FIRMWARE_REPO);//адрес репозитория
     printf("board: %s\n", info.board);//тип платы (из структуры)
@@ -32,6 +34,7 @@ static void cmd_info(const command_t *command) //обработчик коман
            (unsigned)info.manufacturer,  //производитель, hex
            (unsigned)info.part, //изделие, hex
            (unsigned)info.revision);  //ревизия, dec
+    printf("pico-sdk: %s\n", info.sdk_version);          //версия Pico SDK — восьмая строка
 }
 
 static void cmd_uptime(const command_t *command)  //обработчик uptime
@@ -208,7 +211,7 @@ static void cmd_pi(const command_t *command)//обработчик pi
 //таблица команд!!! лежит рядом с обработчиками — новая команда требует правки в одном файле
 const api_command_t api_commands[] = {//таблица команд
 
-    { "info",            "device passport", cmd_info },  //паспорт
+    { "info",            "device passport (did it in Photoshop)", cmd_info },  //паспорт
     { "uptime",          "time since reset", cmd_uptime },  // время с момента сброса
     { "led_enable",      "turn led on",           cmd_led_enable  }, //светодиод вкл
     { "led_disable",     "turn led off",          cmd_led_disable }, //светодиод выкл

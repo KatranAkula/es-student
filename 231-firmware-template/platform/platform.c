@@ -26,5 +26,5 @@ void platform_led_set(bool on)
 
 bool platform_button_read(void)
 {
-    return !gpio_get(BUTTON_PIN) == 0;     //нажатая кнопка даёт ноль — знает только platform
+    return !gpio_get(BUTTON_PIN);     //нажатая кнопка даёт ноль — знает только platform
 }
