@@ -1,10 +1,10 @@
-// button-task.c — задача дребезг подавляет машина состояний без пауз
-#include "button-task.h"       //свой заголовок первым
-#include "led-task.h"          //для led_task_next_state() при подтверждённом нажатии
-#include "systime/systime.h"   //время — из библиотеки
-#include "hardware/gpio.h"     //gpio_init/gpio_get/gpio_pull_up
+#include "button-task.h" //свой заголовок первым
 
-#define BUTTON_PIN        15      //GP15, кнопка между выводом и землёй
+#include "platform/platform.h" //кнопка читается только через platform
+
+#include "systime/systime.h"   //время — из библиотекы
+
+
 #define DEBOUNCE_TIME_US  20000   //порог дребезга 20 мс в микросекундах
 
 typedef enum { //четыре состояния машины кнопки
@@ -17,17 +17,11 @@ typedef enum { //четыре состояния машины кнопки
 static button_state_t button_state;   //текущее состояние, static = не видно снаружи
 static uint64_t       button_state_time_us;//метка входа в текущее состояние
 static uint32_t       button_press_count; //счётчик подтверждённых нажатий
+static button_task_callback_t press_callback; //функция, которую вызовем на нажатие
 
-static bool read_pressed(void) //читаем уровень: нажатая кнопка замыкает вывод на землю → 0
+void button_task_init(button_task_callback_t on_press) //инициализация, один раз из main
 {
-    return gpio_get(BUTTON_PIN) == 0; //true — нажата
-}
-
-void button_task_init(void) //инициализация, один раз из main
-{
-    gpio_init(BUTTON_PIN); //включить GPIO
-    gpio_set_dir(BUTTON_PIN, GPIO_IN);  //сделать входом
-    gpio_pull_up(BUTTON_PIN);  //подтяжка к питанию — отпущенная читается как 1
+    press_callback = on_press; //что делает нажатие — решает main.c
 
     button_state         = BUTTON_RELEASED; //старт — отпущена
     button_state_time_us = 0;  //метка не нужна до первого нажатия
@@ -36,7 +30,7 @@ void button_task_init(void) //инициализация, один раз из m
 
 void button_task_handle(void) //обработчик, зовёт суперцикл
 {
-    bool     pressed = read_pressed();  //читаем уровень один раз
+    bool     pressed = platform_button_read(); //читаем уровень один раз — через platform ← изменилось
     uint64_t now_us  = systime_us();    //читаем часы один раз
 
     switch (button_state) { //переходы по таблице из ТЗ
@@ -53,7 +47,8 @@ void button_task_handle(void) //обработчик, зовёт суперци�
         } else if (now_us - button_state_time_us >= DEBOUNCE_TIME_US) { //держится 20 мс?
             button_state = BUTTON_PRESSED;   //в «нажата»
             button_press_count++;    //засчитали нажатие
-            led_task_next_state();       //перевели светодиод в следующее состояние
+            if (press_callback != NULL)  // ← изменилось: вместо led_task_next_state()
+                press_callback();        //что делает нажатие — решает main.c
         }
         break;
 

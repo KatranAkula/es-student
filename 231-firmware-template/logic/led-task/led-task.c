@@ -1,8 +1,9 @@
 // led-task.c — задача светодиода
 #include "led-task.h"          //свой заголовок первым
+#include "platform/platform.h" //железо — только через platform
 #include "systime/systime.h"   //время и проверка периода — из библиотеки
-#include "hardware/gpio.h" //gpio_init, gpio_put, gpio_set_dir, GPIO_OUT, PICO_DEFAULT_LED_PIN
 
+//пин и ГПИО-вызовы теперь знает только platform.c
 
 static led_state_t led_state;      //текущее состояние, static = не видно снаружи
 static uint32_t    period_ms;      //период в мс (для get)
@@ -17,11 +18,11 @@ void led_task_set_state(led_state_t state) //единственная точка
     switch (led_state) {  //действие при входе
     case LED_STATE_OFF:    //вход в «выключен»
         led_level = false;  //уровень = 0
-        gpio_put(PICO_DEFAULT_LED_PIN, false);  //гасим
+        platform_led_set(false);  //гасим
         break;
     case LED_STATE_ON:   //вход в «горит»
         led_level = true;   //уровень = 1
-        gpio_put(PICO_DEFAULT_LED_PIN, true);//зажигаем
+        platform_led_set(true);//зажигаем
         break;
     case LED_STATE_BLINK:  //вход в «мигает»
         last_toggle_us = systime_us() - half_period_us; // метка в прошлое — первое переключение сразу
@@ -66,8 +67,7 @@ uint32_t led_task_get_period_ms(void)  //чтение периода
 
 void led_task_init(void) //инициализация, один раз из main
 {
-    gpio_init(PICO_DEFAULT_LED_PIN); //включить GPIO
-    gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);  //сделать выходом
+    //настройка пина переехала в platform_init()
 
     led_level      = false;  //начальный уровень — 0
     period_ms      = 1000;   //период 1 с по ТЗ
@@ -84,7 +84,7 @@ void led_task_handle(void)  //обработчик, зовёт суперцик�
     case LED_STATE_BLINK: //«мигает»
         if (systime_period_elapsed(&last_toggle_us, half_period_us)) { // пора переключать?
             led_level = !led_level;  //инвертируем уровень
-            gpio_put(PICO_DEFAULT_LED_PIN, led_level); // пишем в вывод
+            platform_led_set(led_level); // пишем в вывод
         }
         break;
     }

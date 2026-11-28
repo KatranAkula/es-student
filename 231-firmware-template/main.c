@@ -1,6 +1,5 @@
-#include "pico/stdlib.h"
-#include <stdio.h>
-#include "led-task.h"          //задача светодиода
+#include "platform/platform.h" //запуск железа — единственная точка с SDK внутри
+#include "led-task/led-task.h" //задача светодиода
 
 #include "logging/logging.h"   //вместо "лог.h"
 #include "device/device.h"     //паспорт платы
@@ -8,9 +7,12 @@
 #include "stdio-text-protocol/stdio-text-protocol.h"
 #include "systime/systime.h"   //время и period_elapsed
 
-#include "api.h"
-#include "button-task.h"
-#include "pi-task.h"
+#include "logic/api/api.h"
+
+
+
+#include "logic/button-task/button-task.h"
+#include "logic/pi-task/pi-task.h"
 
 #include "firmware.h"
 
@@ -26,15 +28,15 @@ typedef enum {
 
 int main()
 {
-    stdio_init_all(); //инициализация ввода-вывода
+    platform_init(); //инициализация ввода-вывода и выводов светодиода и кнопки
 
     LOG_INF("%s %s\n", FIRMWARE_NAME, FIRMWARE_VERSION); //имя и версия прошивки при запуске
 
-    led_task_init(); //вместо led_init() — задача сама настроит пин
+    led_task_init(); //задача светодиода: состояние и период
 
     stdio_text_protocol_init(); //инициализация протокола
 
-    button_task_init(); //GPIO кнопки: вход с подтяжкой к питанию
+    button_task_init(led_task_next_state); //нажатие переводит светодиод в следующее состояние
 
 
     //завести секундомеры (имя + номер)
@@ -72,4 +74,3 @@ int main()
         profiling_stop(STOPWATCH_LOOP); //стоп замера всей итерации
     }
 }
-

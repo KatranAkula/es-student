@@ -1,22 +1,19 @@
-//api.c
-#include "api.h"
-//#include "pico/stdlib.h" удалён: проект не должен тянуть SDK напрямую, время берём из библиотеки systime
+#include "api-commands.h"     //свой внутренний заголовок первым
+
 #include "device/device.h"
 #include "profiling/profiling.h"
 #include "systime/systime.h"   //добавлен: systime_ms() для uptime
 #include "firmware.h"          //константы прошивки
+#include "led-task/led-task.h"
+#include "button-task/button-task.h"
+#include "pi-task/pi-task.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <ctype.h>
-#include "led-task.h"
-#include "button-task.h"
-#include "pi-task.h"
 
-
-
-//набор команд
+//содержание api: обработчики команд этого прибора и таблица
 
 //info: печатает паспорт из структуры
 static void cmd_info(const command_t *command) //обработчик команды info
@@ -35,17 +32,13 @@ static void cmd_info(const command_t *command) //обработчик коман
            (unsigned)info.manufacturer,  //производитель, hex
            (unsigned)info.part, //изделие, hex
            (unsigned)info.revision);  //ревизия, dec
-    printf("pico-sdk: %s\n", info.sdk_version);//версия SDK (из структуры) 
 }
-
 
 static void cmd_uptime(const command_t *command)  //обработчик uptime
 {
     (void)command;  //аргументы не нужны
     printf("uptime: %lu ms\n", (unsigned long)systime_ms());//время с момента сброса в мс
 }
-
-
 
 //команды светодиода состояние и период
 static void print_led_state(void)  //общий ответ для команд светодиода
@@ -59,8 +52,6 @@ static void print_led_state(void)  //общий ответ для команд �
            names[led_task_get_state()],  //текущее состояние
            (unsigned)led_task_get_period_ms());//текущий период
 }
-
-
 
 static void cmd_led_enable(const command_t *command) //обработчик led_enable
 {
@@ -76,18 +67,12 @@ static void cmd_led_disable(const command_t *command)//обработчик led_
     print_led_state(); //напечатать состояние и период
 }
 
-
-
-
 static void cmd_led_blink(const command_t *command)  //обработчик led_blink
 {
     (void)command;  //аргументы не нужны
     led_task_set_state(LED_STATE_BLINK); //перевести в режим мигания
     print_led_state(); //напечатать состояние и период
 }
-
-
-
 
 //разбирает числа без знака
 static bool parse_u32(const char *text, uint32_t *value)//разобрать строку в uint32_t
@@ -110,8 +95,6 @@ static bool parse_u32(const char *text, uint32_t *value)//разобрать с�
     return true; //успех
 }
 
-
-
 static void cmd_led_period(const command_t *command) //обработчик led_period
 {
     uint32_t period_ms;//сюда разберём аргумент
@@ -130,10 +113,6 @@ static void cmd_led_period(const command_t *command) //обработчик led_
 
     print_led_state(); //напечатать состояние и период
 }
-
-
-
-
 
 //команда кнопки: состояние и число нажатий
 static void cmd_button(const command_t *command)  //обработчик button
@@ -175,10 +154,6 @@ static void cmd_profiling_reset(const command_t *command)// обработчик
     printf("profiling reset\n");//подтвердить сброс
 }
 
-
-
-
-
 //команды расчёта Пи
 static void cmd_pi_start(const command_t *command)//обработчик pi_start
 {
@@ -207,9 +182,6 @@ static void cmd_pi_start(const command_t *command)//обработчик pi_star
     printf("pi: started, %u terms\n", (unsigned)terms); //запущено
 }
 
-
-
-
 static void cmd_pi(const command_t *command)//обработчик pi
 {
     (void)command;  //аргументы не нужны
@@ -223,12 +195,9 @@ static void cmd_pi(const command_t *command)//обработчик pi
         return;
     }
 
-
     if (pi_task_get_state() == PI_STATE_RUNNING)  //ещё считает?
     {
         printf("pi: running\n");//сообщить
-
-
     }
     else      //не запускался
     {
@@ -236,18 +205,8 @@ static void cmd_pi(const command_t *command)//обработчик pi
     }
 }
 
-//таблица команд!!!
-
-typedef void (*api_callback_t)(const command_t *command);// тип обработчика
-
-typedef struct//запись таблицы команд
-{
-    const char *name;  //имя команды
-    const char *help;  //справка для help
-    api_callback_t callback; //обработчик
-} api_command_t;
-
-static const api_command_t commands[] = {//таблица команд
+//таблица команд!!! лежит рядом с обработчиками — новая команда требует правки в одном файле
+const api_command_t api_commands[] = {//таблица команд
 
     { "info",            "device passport", cmd_info },  //паспорт
     { "uptime",          "time since reset", cmd_uptime },  // время с момента сброса
@@ -263,46 +222,4 @@ static const api_command_t commands[] = {//таблица команд
 
 };
 
-static const uint32_t commands_count = sizeof(commands) / sizeof(commands[0]); // число команд
-
-
-void api_handle(const command_t *command)//главный обработчик
-{
- //переполнение буфера (truncated)
-    if (command->truncated)  //строка не поместилась?
-    {
-        printf("error: command longer than 63 characters or 4 arguments\n"); // ошибка
-        return;
-    }
-
- //help
-    if (strcmp(command->name, "help") == 0) //команда help?
-    {
-        printf("help             list of commands\n");  //заголовок
-
-
-        for (uint32_t i = 0; i < commands_count; i++)//по всем командам
-        {
-            printf("%-16s %s\n", commands[i].name, commands[i].help); //имя и справка
-        }
-        return;
-    }
-
-
-
- //поиск в таблице
-    for (uint32_t i = 0; i < commands_count; i++) //по всем командам
-    {
-        if (strcmp(command->name, commands[i].name) == 0)// имя совпало?
-        {
-            commands[i].callback(command);  //вызвать обработчик
-            return;
-        }
-
-
-    }
-
-
-    printf("error: unknown command '%s', try help\n", command->name); //неизвестная команда - ошибка
-
-}
+const uint32_t api_commands_count = sizeof(api_commands) / sizeof(api_commands[0]); // число команд
