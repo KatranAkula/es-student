@@ -84,6 +84,10 @@ const command_t *stdio_text_protocol_handle(void)
             return NULL; //строка из одних пробелов
         }
 
+        //так указано в А.4 - на конец кадра — CR LF, затем кадр ответа
+        putchar('\r');
+        putchar('\n');
+
         return &command;
     }
 
